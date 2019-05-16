@@ -5,14 +5,14 @@ This repository will contain replication materials for a working paper ("African
 Replication material for "African, Religious, and Tolerant? How Religious Diversity Shapes Attitudes Towards Sexual Minorities in Africa" (article under review)
 
 ## Authors
-James Long, Sarah Dreier, and Stephen Winkler. 
+Sarah Dreier, James Long, and Stephen Winkler. 
 
 ## Afrobarometer Data
 We use the merged Afrobaormeter Round 6 data, which is publicly available at: http://afrobarometer.org/data/merged-data.
 Download this dataset and save it in a folder called `data-raw` within your directory. Make sure the downloaded dataset is named: `merged_r6_data_2016_36countries2.sav`.  OR follow the scripts (below) to download directly from the Afrob website.s
 
 ## Build Scripts
-- `source/create_herf.R` reads in the Afrobarometer data from its web source (http://afrobarometer.org/data/merged-data), creates Herfindahl variables, saves new dataset as: `data/afrob_with_herf.RData`.
+- `source/create_herf.R` reads in the Afrobarometer data from its web source [Afrobarometer.org](http://afrobarometer.org/data/merged-data), creates Herfindahl variables, saves new dataset as: `data/afrob_with_herf.RData`.
 
 - `source/clean_afrobarometer.R` transforms and cleans variables used in the analysis. Subsets those variables into a new dataset and saves it as: `data/clean_afrobarometer.csv`. (STEPHEN will clean this code)
 
