@@ -225,6 +225,7 @@ data <- merge(data, out_cty, by.x.y="RESPNO") # merge county with original/regio
 
 save(data, file = "data/afrob_with_herf.RData")
 
+#TEST TEST
 ######################################################
 ########       END OF HERFINDAHL SCRIPT       ########
 ######################################################
