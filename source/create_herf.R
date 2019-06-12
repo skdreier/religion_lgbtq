@@ -3,6 +3,9 @@
 # Long, Dreier, Winkler (P&R)                 #
 #                                             #
 # CODE TO CREATE HERFINDAHL SCORES            #
+# AFROBAORMETER DATA                          #
+#                                             #
+# Code by S. Dreier                           #
 #                                             #
 # R version 3.4.4 (2018-03-15)                #
 # DATE: 5/2/2019                              #

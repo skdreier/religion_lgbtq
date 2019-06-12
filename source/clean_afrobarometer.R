@@ -4,10 +4,12 @@
 #                                             #
 # CODE TO CLEAN & TRANSFORM AFROBAROMETER     #
 # AFROBAORMETER DATA                          #
+#                                             #
+# Code by S. Winkler                          #
+#                                             #
 # R version 3.5.2 (2018-12-20)                #
 # DATE: 5/17/2019                             #
 ###############################################
-
 
 # Content:
 # - Load Afrobarometer dataset with added Herfindahl scores
@@ -30,7 +32,8 @@ library(forcats) #factor recoding
 ### HERFINDAHL SCORES ############
 ##################################
 
-afro <- read.csv("data/afro_with_herf.csv", header = TRUE)
+load(file="data/afrob_with_herf.RData")
+afro <- data
 
 #################################
 ### CLEAN/TRANSFORM VARIABLES ###
@@ -209,7 +212,7 @@ afro <- dplyr::rename(afro, sample_size_reg=size_sample_reg)
 afro <- dplyr::rename(afro, DISTRICT=COUNTY)
 
 # Subset data to only what we need for analysis
-afro <-
+data <-
   dplyr::select(afro, RESPNO, ethn, relig, relig_bin, COUNTRY, URBRUR, REGION, DISTRICT,
                 herf_ethn_reg, herf_ethn_dist, maj_ethn_reg, maj_ethn_dist,
                 herf_relig_reg, herf_relig_dist, maj_relig_reg, maj_relig_dist,
@@ -228,4 +231,4 @@ afro <-
 ###  SAVE SUBSETTED DATASET ###
 ###############################
 
-write.csv(afro, file = "data/clean_afrobarometer.csv")
+save(data, file = "data/clean_afrobarometer.RData")
