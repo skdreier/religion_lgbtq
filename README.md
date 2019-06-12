@@ -15,14 +15,17 @@ We use the merged Afrobaormeter Round 6 data, which is publicly available at: ht
 ## Build Scripts
 - `source/create_herf.R` reads in the Afrobarometer data from its web source [Afrobarometer.org](http://afrobarometer.org/data/merged-data), calculates Herfindahl scores for key "diversity" variables, and saves the new dataset as: `data/afrob_with_herf.RData`.
 
-- `source/clean_afrobarometer.R` transforms and cleans variables used in the analysis. Subsets those variables into a new dataset and saves it as: `data/clean_afrobarometer.csv`. (STEPHEN will clean this code)
+- `source/clean_afrobarometer.R` transforms and cleans variables used in the analysis. Subsets those variables into a new dataset and saves it as: `data/clean_afrobarometer.csv`.
 
 ## Analysis and Outputs
 - `source/descriptive_stats.R` generates descriptive plots/tables:
     - Figure 2a & 2b: Distribution of dependent variable
-    - Figure 3a & 3b: Distribution of independent variables
+    - Figure 3a & 3b: Distribution of independent variable
     - Table A.2: Spearman correlations of tolerance variables 
-    - STEPHEN WILL ADD CODE FROM `source/descriptive_stats_table.R` into this script to condense 
+    - Table A.3: Descriptive statistics for model covariates
+    - Figure 1: Percent dislike by country
+    
+    
 
 `source/main_models.R` runs main models, creates:
     - STEPHEN WILL FILL IN
