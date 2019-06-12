@@ -5,6 +5,10 @@
 # CODE TO CREATE HERFINDAHL SCORES            #
 # AFROBAORMETER DATA                          #
 #                                             #
+# OUTPUTS:                                    #
+#   - Data with Herfindahl calculations       #
+#   - Statistics for Tables A.4 and A.5       #
+#                                             #
 # Code lead: S. Dreier                        #
 #                                             #
 #  R version 3.6.0 (2019-04-26)               #
@@ -17,6 +21,7 @@
 # - Recode and bin religious identities
 # - Write/run Herfindahl function
 # - Merge back to all Afro data
+# - Pull statistics for Tables A.4 and A.5
 
 rm(list=ls())
 
@@ -33,10 +38,11 @@ check.packages <- function(pkg){
 }
 
 # Check to see if packages are installed, and then load them
-packages<-c("Hmisc", "stringr", "DescTools", "dplyr")
+packages<-c("Hmisc", "stringr", "DescTools", "dplyr", "gmodels")
 
 # Load packages
 suppressWarnings( check.packages(packages) )
+
 
 ##########################################
 ### LOAD AFROBAROMETER ROUND 6 DATASET ###
@@ -228,7 +234,73 @@ data <- merge(data, out_cty, by.x.y="RESPNO") # merge county with original/regio
 
 save(data, file = "data/afrob_with_herf.RData")
 
-#TEST TEST
+#########################################
+### PULL HHI SCORES FOR KENYA SUBSETS ###
+### Statistics for Tables A.4 and A.5 ###
+#########################################
+
+# Subset to Kenya
+ken <- subset(data, COUNTRY==13) 
+
+# Look at herf scores and demographic breakdowns by county
+nams <- unique(ken$ctry_reg_cty)
+rel_herf_collect <- ethn_herf_collect <- max_relig_collect <- max_ethn_collect <- rep(NA, length(nams))
+
+for (i in 1:length(nams)){
+  rel_herf_collect[i] <- round (ken$herf_relig_bin_cty[ken$ctry_reg_cty==nams[i]][1], 3)
+  ethn_herf_collect[i] <- round ( ken$herf_ethn_cty[ken$ctry_reg_cty==nams[i]][1], 3)
+  max_relig_collect[i] <- as.numeric ( names( which.max( table(ken$relig_bin[ken$ctry_reg_cty==nams[i]]  ) )  ) )
+  max_ethn_collect[i] <- as.numeric ( names( which.max( table(ken$ethn[ken$ctry_reg_cty==nams[i]]  ) )  ) )
+}
+
+#### Statistics for Table A.4 (built manually in Latex)
+
+# Religion herf scores per district for select districts 
+# (See appendix for county selection justification)
+
+rel_statistics <- data.frame(nams, rel_herf_collect, max_relig_collect)
+rel_table <- subset(rel_statistics, with (rel_statistics, nams=="13_306_Mandera" | nams=="13_303_Turkana" | 
+                                            nams=="13_303_Kajiado" | nams=="13_304_Siaya" )  )
+rel_table <- rel_table[order(-rel_table$rel_herf_collect),]
+
+# Religion breakdowns: Mandera, Turkana, Siaya, Kajiado
+
+table(ken$relig_bin[ken$ctry_reg_cty=="13_306_Mandera"]) # All Muslim
+Mandera <- c(6, 1.0)
+
+ct <- CrossTable(ken$relig_bin[ken$ctry_reg_cty=="13_303_Turkana"])
+Turkana <- round ( as.data.frame(ct$prop.row), 2)  
+
+ct <- CrossTable(ken$relig_bin[ken$ctry_reg_cty=="13_303_Kajiado"])
+Kajiado <- round ( as.data.frame(ct$prop.row), 2)  
+
+ct <- CrossTable(ken$relig_bin[ken$ctry_reg_cty=="13_304_Siaya"])
+Siaya <- round ( as.data.frame(ct$prop.row), 2)  
+
+
+#### Statistics for Table A.5 (built manually in Latex)
+
+# Ethnicity herf scores per district for select districts 
+# (See appendix for county selection justification)
+
+ethn_statistics <- data.frame(nams, ethn_herf_collect, max_ethn_collect)
+ethn_table <- subset(ethn_statistics, with (ethn_statistics, nams=="13_301_Kiambu" | nams=="13_301_Nyandarua" |
+                       nams=="13_303_Nakuru" | nams=="13_300_Nairobi" )  )
+
+# Ethnicity breakdowns: Kiambu, Nyandarua, Nakuru, Nairobi
+
+ct <- CrossTable(ken$ethn[ken$ctry_reg_cty=="13_301_Kiambu"])
+Kiambu <- round(as.data.frame(ct$prop.row), 2)  
+
+table( ken$ethn[ken$ctry_reg_cty=="13_301_Nyandarua"] ) # All Kikuyu
+Nyandarua <- c(300, 1.0)
+
+ct <- CrossTable(ken$ethn[ken$ctry_reg_cty=="13_303_Nakuru"])
+Nakuru <- round(as.data.frame(ct$prop.row), 2)  
+
+ct <- CrossTable(ken$ethn[ken$ctry_reg_cty=="13_300_Nairobi"])
+Nairobi <- round(as.data.frame(ct$prop.row), 2)  
+
 ######################################################
 ########       END OF HERFINDAHL SCRIPT       ########
 ######################################################

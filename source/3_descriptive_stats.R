@@ -9,6 +9,7 @@
 #   - Figure 1                                    #
 #   - Figure 2a & 2b                              #                        
 #   - Figure 3a & 3b                              #
+#   - Table A.1 info                              #
 #   - Table A.2                                   #
 #   - Table A.3                                   #
 #                                                 #
@@ -235,6 +236,14 @@ iv_plot2 <- # plot independent variable based on binned religion categories (Fig
 ggsave(filename = "figures/3b_iv_distribution_binned.png", #Save it to directory
        plot = iv_plot2)
 
+####################################
+### TABLE A.1: LIST OF COUNTRIES ###
+### INCLUDED/OMITTED IN ANALYSIS ###
+####################################
+
+print(c("COUNTRIES INCLUDED (Q89C ASKED):", unique(myData$ctry)))
+print(c("COUNTRIES EXCLUDED (Q89C NOT ASKED):", "Algeria", "Egypt", "Sudan"))
+
 #######################################
 ### TABLE A.2: COVARIANCE MATRIX OF ###
 ### ALL SOCIAL TOLERANCE VARAIBLES ####
@@ -305,3 +314,8 @@ row.names(tab_sum) <- c(
 )
 
 xtable(tab_sum) #latex output 
+
+
+#############################################################
+########       END OF DESCRIPTIVE STATS SCRIPT       ########
+#############################################################

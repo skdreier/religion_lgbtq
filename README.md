@@ -13,7 +13,7 @@ Sarah Dreier, James Long, and Stephen Winkler.
 We use the merged Afrobaormeter Round 6 data, which is publicly available at: http://afrobarometer.org/data/merged-data. Follow the source R scripts (below) to download directly from the Afrob website. Alternatively, download this dataset and save it in a folder within your directory. Make sure the downloaded dataset is named: `merged_r6_data_2016_36countries2.sav`.  
 
 ## Build Scripts
-- `source/create_herf.R` reads in the Afrobarometer data from its web source [Afrobarometer.org](http://afrobarometer.org/data/merged-data), calculates Herfindahl scores for key "diversity" variables, and saves the new dataset ("data") as: `data/afrob_with_herf.RData`.
+- `source/create_herf.R` reads in the Afrobarometer data from its web source [Afrobarometer.org](http://afrobarometer.org/data/merged-data), calculates Herfindahl scores for key "diversity" variables, saves the new dataset ("data") as: `data/afrob_with_herf.RData`, and produces statistics for Tables A.4 and A.5 (which are built manually in Latex).
 
 - `source/clean_afrobarometer.R` transforms and cleans variables used in the analysis, subsets those variables into a new dataset ("data"), and saves it as: `data/clean_afrobarometer.RData`.
 
