@@ -25,7 +25,7 @@ We use the merged Afrobaormeter Round 6 data, which is publicly available at: ht
     - Table A.2: Spearman correlations of tolerance variables 
     - Table A.3: Descriptive statistics for model covariates **SW: This code doesn't run for me?**
     
-`source/main_models.R` generates tables for main models and various replications of main models:
+- `source/main_models.R` generates tables for main models and various replications of main models:
     - Table 1: Main OLS results
     - Table A.6: Main logit results
     - Table A.7: Main ordered probit results
