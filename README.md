@@ -19,13 +19,11 @@ We use the merged Afrobaormeter Round 6 data, which is publicly available at: ht
 
 ## Analysis and Outputs
 - `source/descriptive_stats.R` generates descriptive plots/tables:
+    - Figure 1: Percent of respondents who dislike LGBTQ by country (DV)
     - Figure 2a & 2b: Distribution of dependent variable
     - Figure 3a & 3b: Distribution of independent variable
     - Table A.2: Spearman correlations of tolerance variables 
     - Table A.3: Descriptive statistics for model covariates
-    - Figure 1: Percent dislike by country
-    
-    
 
 `source/main_models.R` runs main models, creates:
     - STEPHEN WILL FILL IN

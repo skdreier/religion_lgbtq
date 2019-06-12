@@ -1,19 +1,22 @@
-###############################################
-# Replication Code for:                       
-# Long, Dreier, Winkler (P&R)                 
-# 
-# Code to generate descriptive tables/figures.
-# 
-# OUTPUTS:
-#   - Figure 2a & 2b                        
-#   - Figure 3a & 3b
-#   - Table A.2 
-#   - Table A.3
-
-# AFROBAORMETER DATA                          
-# R version 3.5.2 (2018-12-20)                
-# DATE: 5/17/2019                             
-###############################################
+###################################################
+# Replication Code for:                           #
+# Long, Dreier, Winkler (P&R)                     #
+#                                                 #
+# CODE TO GENERATE DESCRIPTIVE TABLES AND FIGURES #
+# AFROBAROMETER DATA                              #
+#                                                 #
+# OUTPUTS:                                        #
+#   - Figure 1                                    #
+#   - Figure 2a & 2b                              #                        
+#   - Figure 3a & 3b                              #
+#   - Table A.2                                   #
+#   - Table A.3                                   #
+#                                                 #
+# Coders: S. Winkler and S. Dreier                #
+#                                                 #
+# R version 3.6.0 (2019-04-26)                    #
+# DATE: 06/12/2019                                #
+###################################################
 
 rm(list=ls())
 
@@ -28,16 +31,114 @@ library(forcats)
 library(stargazer)
 library(scales)
 library(xtable)
-library(MASS)
 
 ##########################
 ### LOAD SUBSET OF     ###
 ### AFROBAROMETER DATA ###
 ##########################
 
-# setwd("~/Dropbox/Projects/Af_LGBT_Tolerance_JL_SW_SD")
+load(file="data/clean_afrobarometer.RData") # saved as "data"
+myData <- data
 
-myData <- read.csv("data/clean_afrobarometer.csv", header = TRUE) 
+###########################################################
+### FIGURE 1: PERCENT DISLIKE LGBTQ NEIGHBOR BY COUNTRY ###
+### DV DESCRIPTIVE STATISTICS #############################
+###########################################################
+
+# Label country names and reformat vectors for plot
+myData %<>%
+  dplyr::mutate(ctry = as.factor(COUNTRY), #create logical version of the variable 
+                ctry = fct_recode(ctry,
+                                  "Benin" = "2",
+                                  "Botswana" = "3",
+                                  "Burkina Faso" = "4",
+                                  "Burundi"  = "5",
+                                  "Cameroon"  = "6",
+                                  "Cape Verde"  = "7",
+                                  "Cote d'Ivoire"  = "8",
+                                  "Gabon"  = "10",
+                                  "Ghana"  = "11",
+                                  "Guinea"  = "12",
+                                  "Kenya"  = "13",
+                                  "Lesotho"  = "14",
+                                  "Liberia"  = "15",
+                                  "Madagascar"  = "16",
+                                  "Malawi"  = "17",
+                                  "Mali"  = "18",
+                                  "Mauritius"  = "19",
+                                  "Morocco"  = "20",
+                                  "Mozambique"  = "21",
+                                  "Namibia"  = "22",
+                                  "Niger"  = "23",
+                                  "Nigeria"  = "24",
+                                  "Sao Tome & Principe"  = "25",
+                                  "Senegal"  = "26",
+                                  "Sierra Leone"  = "27",
+                                  "South Africa"  = "28",
+                                  "Swaziland"  = "30",
+                                  "Tanzania" = "31",
+                                  "Togo" = "32",
+                                  "Tunisia" = "33",
+                                  "Uganda" = "34",
+                                  "Zambia" = "35",
+                                  "Zimbabwe" = "36"  ),
+                ctry = as.character(ctry),
+                sexuality2 = as.numeric(sexuality2)-1
+  )
+
+# Omit NAs on sexuality2 for mean calculations
+meanData <- na.omit(dplyr::select(myData, ctry, sexuality2))
+
+# Create "All survey" variable to calculate survey mean
+all_survey <- meanData
+all_survey$ctry <- "SURVEY MEAN"
+meanData <- rbind(meanData, all_survey)
+
+# Split dataset by country
+country_list <- split(meanData, meanData$ctry)
+
+# Function to caluclate country means/CI
+mean_func <- function(data) {
+  n = length(data$sexuality2)
+  sigma = sd(data$sexuality2)
+  sem = sigma/sqrt(n)
+  E = qnorm(.975)*sem 
+  xbar = 1-mean(data$sexuality2, na.rm=T)
+  xbar + c(-E, 0, E)
+}
+
+# Apply function to each country in country_list
+country_list_means <- lapply(country_list, mean_func)
+
+# Collapse list into single dataset
+data_out <- t(bind_cols(country_list_means))
+
+# Prepare dataset for plotting
+plot_data <- data.frame( rownames(data_out), data_out, row.names=NULL, stringsAsFactors = F)
+colnames(plot_data) <- c("ctry", "lower", "mean", "upper")
+sorted <- plot_data[ rev(order(plot_data$mean)) ,]
+row.names(sorted) = c(1:34)
+
+# PLOT FIGURE 1: Percent who would dislike having an LGBTQ neighbor (by country)
+pdf(file="figures/1_dv_ctry.pdf",width=5,height=5)
+par(mai=c(.7,1,0.35,1.2))
+plot(sorted$mean, nrow(sorted):1, type="p", xlim =c(0,1),
+     pch=16, cex=.7, yaxt="n", xaxt="n", ylab="", xlab="", bty="n", cex.main=.9, cex.axis=.9)
+abline(v= sorted$mean[sorted$ctry=="SURVEY MEAN"], col="grey")
+for (i in 1:length(sorted$ctry)){
+  segments(x0= sorted$lower[i], y0=abs(i-length(sorted$ctry))+1, 
+           x1= sorted$upper[i], y1=abs(i-length(sorted$ctry))+1  )
+}
+points(sorted$mean[sorted$ctry=="SURVEY MEAN"], 9, pch=16, cex=.7)
+axis(4, at=1:34, labels = rev(sorted$ctry), las=1, cex.axis=.6) 
+axis(1, at=c(seq(0,1,.2)), labels = c("0%", "20%", "40%", "60%", "80%", "100%"), las=1, cex.axis=.8) 
+text(.69, 33, labels="mean\n response", cex=.6, col="grey")
+dev.off()
+
+###################################
+### FIGURE 2A: DISTRIBUTION OF ####
+### UNBINNED DEPENDENT VARIABLE ###
+###################################
 
 # Invert Herf so that E(0:1) where 1 is more heterogenous district
 myData$herf_ethn_reg <- 1.00 - myData$herf_ethn_reg
@@ -48,11 +149,6 @@ myData$herf_relig_bin_reg <- 1.00 - myData$herf_relig_bin_reg
 myData$herf_relig_bin_dist <- 1.00 - myData$herf_relig_bin_dist
 myData$herf_pol_reg <- 1.00 - myData$herf_pol_reg
 myData$herf_pol_dist <- 1.00 - myData$herf_pol_dist
-
-###################################
-### FIGURE 2A: DISTRIBUTION OF ####
-### UNBINNED DEPENDENT VARIABLE ###
-###################################
 
 myData %<>% 
   mutate(sexuality4 = as.factor(sexuality), #Create new variable
@@ -72,7 +168,7 @@ dv_plot2 <- #plot for ordinal dependent variable (Figure 2a)
         axis.text.y = element_text(size=16)) +
   theme_bw()
 
-ggsave(filename = "plots/dv_plot2.png", #Save it to directory
+ggsave(filename = "figures/2a_dv_distribution.png", #Save it to directory
        plot = dv_plot2)
 
 ###################################
@@ -95,7 +191,7 @@ dv_plot1 <- #plot for logical dependent variable (Figure 2b)
         axis.text.y = element_text(size=16)) +
   theme_bw()
   
-ggsave(filename = "plots/dv_plot1b.png", #Save it to directory
+ggsave(filename = "figures/2b_dv_distribution_binned.png", #Save it to directory
        plot = dv_plot1)
 
 #####################################
@@ -117,7 +213,7 @@ iv_plot1 <- # plot independent variable based on original religion categories (F
         axis.title.y = element_text(size=14)) + 
   theme_bw()
 
-ggsave(filename = "plots/iv_plot1_dist.png", #Save it to directory
+ggsave(filename = "figures/3a_iv_distribution.png", #Save it to directory
        plot = iv_plot1)
 
 #####################################
@@ -136,7 +232,7 @@ iv_plot2 <- # plot independent variable based on binned religion categories (Fig
         axis.title.y = element_text(size=14)) +
   theme_bw()
 
-ggsave(filename = "plots/iv_plot2_dist.png", #Save it to directory
+ggsave(filename = "figures/3b_iv_distribution_binned.png", #Save it to directory
        plot = iv_plot2)
 
 #######################################
@@ -144,8 +240,9 @@ ggsave(filename = "plots/iv_plot2_dist.png", #Save it to directory
 ### ALL SOCIAL TOLERANCE VARAIBLES ####
 #######################################
 
-tolerance_data <- select(myData, tol_relig, tol_ethnic, sexuality,
+tolerance_data <- dplyr::select(myData, tol_relig, tol_ethnic, sexuality,
                          tol_hiv, tol_immig)
+
 tolerance_cov_table <-
   cor(tolerance_data, use = "pairwise.complete.obs", method = "spearman") 
 
@@ -160,6 +257,8 @@ stargazer(tolerance_cov_table, title="Spearman Correlation Matrix of Tolerance B
 ### TABLE A.3: DESCRIPTIVE STATS ###
 ### FOR MODEL COVARIATES ###########
 ####################################
+
+## STEPHEN: My code breaks here... not sure why? ##
 
 table_data <- myData[,c("sexuality2", # setup table
                         "herf_relig_bin_dist", "maj_relig_bin_dist",
@@ -206,101 +305,3 @@ row.names(tab_sum) <- c(
 )
 
 xtable(tab_sum) #latex output 
-
-
-
-#####################################################
-### FIGURE 1: % DISLIKE LGBTQ NEIGHBOR BY COUNTRY ###
-### DESCRIPTIVE STATISTICS FROM AFROB ###############
-#####################################################
-
-# Label country names for plot 
-myData %<>%
-  dplyr::mutate(ctry = as.factor(COUNTRY), #create logical version of the variable 
-                ctry = fct_recode(ctry,
-                                  "Benin" = "2",
-                                  "Botswana" = "3",
-                                  "Burkina Faso" = "4",
-                                  "Burundi"  = "5",
-                                  "Cameroon"  = "6",
-                                  "Cape Verde"  = "7",
-                                  "Cote d'Ivoire"  = "8",
-                                  "Gabon"  = "10",
-                                  "Ghana"  = "11",
-                                  "Guinea"  = "12",
-                                  "Kenya"  = "13",
-                                  "Lesotho"  = "14",
-                                  "Liberia"  = "15",
-                                  "Madagascar"  = "16",
-                                  "Malawi"  = "17",
-                                  "Mali"  = "18",
-                                  "Mauritius"  = "19",
-                                  "Morocco"  = "20",
-                                  "Mozambique"  = "21",
-                                  "Namibia"  = "22",
-                                  "Niger"  = "23",
-                                  "Nigeria"  = "24",
-                                  "Sao Tome & Principe"  = "25",
-                                  "Senegal"  = "26",
-                                  "Sierra Leone"  = "27",
-                                  "South Africa"  = "28",
-                                  "Swaziland"  = "30",
-                                  "Tanzania" = "31",
-                                  "Togo" = "32",
-                                  "Tunisia" = "33",
-                                  "Uganda" = "34",
-                                  "Zambia" = "35",
-                                  "Zimbabwe" = "36"  ),
-                ctry = as.character(ctry)
-                )
-
-# Omit NAs on sexuality2 question for mean calculations
-meanData <- na.omit(data.frame(myData$ctry, myData$sexuality2))
-colnames(meanData) <- c("ctry", "sexuality2")
-
-# Create "All survey" variable to calculate survey mean
-all_survey <- meanData
-all_survey$ctry <- "SURVEY MEAN"
-meanData <- rbind(meanData, all_survey)
-
-# Split dataset by country
-country_list <- split(meanData, meanData$ctry)
-
-# Function to caluclate country means/CI
-mean_func <- function(data) {
-  n = length(data$sexuality2)
-  sigma = sd(data$sexuality2)
-  sem = sigma/sqrt(n)
-  E = qnorm(.975)*sem 
-  xbar = 1-mean(data$sexuality2, na.rm=T)
-  xbar + c(-E, 0, E)
-}
-
-# Apply function to each country in country_list
-country_list_means <- lapply(country_list, mean_func)
-
-# Collapse list into single dataset
-data_out <- t(bind_cols(country_list_means))
-
-# Prepare dataset for plotting
-plot_data <- data.frame( rownames(data_out), data_out, row.names=NULL, stringsAsFactors = F)
-colnames(plot_data) <- c("ctry", "lower", "mean", "upper")
-sorted <- plot_data[ rev(order(plot_data$mean)) ,]
-row.names(sorted) = c(1:34)
-
-# PLOT FIGURE 1: Percent who would dislike having an LGBTQ neighbor (by country)
-#pdf(file="plots/lgbt_ctry_perc.pdf",width=5,height=5)
-par(mai=c(.7,1,0.35,1.2))
-plot(sorted$mean, nrow(sorted):1, type="p", xlim =c(0,1), ylim=c(0,34),
-     pch=16, cex=.7, yaxt="n", xaxt="n", ylab="", xlab="", bty="n", cex.main=.9, cex.axis=.9)
-abline(h= abs(length(sorted$ctry)-which(sorted$ctry=="SURVEY MEAN"))+1, col="grey")
-for (i in 1:length(sorted$ctry)){
-  segments(x0= sorted$lower[i], y0=abs(i-length(sorted$ctry))+1, 
-           x1= sorted$upper[i], y1=abs(i-length(sorted$ctry))+1  )
-}
-points(0.7823729, 9, pch=16, cex=.7)
-axis(4, at=1:34, labels = rev(sorted$ctry), las=1, cex.axis=.6) 
-axis(1, at=c(seq(0,1,.2)), labels = c("0%", "20%", "40%", "60%", "80%", "100%"), las=1, cex.axis=.8) 
-#dev.off()
-
-

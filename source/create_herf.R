@@ -5,10 +5,10 @@
 # CODE TO CREATE HERFINDAHL SCORES            #
 # AFROBAORMETER DATA                          #
 #                                             #
-# Code by S. Dreier                           #
+# Code lead: S. Dreier                        #
 #                                             #
-# R version 3.4.4 (2018-03-15)                #
-# DATE: 5/2/2019                              #
+#  R version 3.6.0 (2019-04-26)               #
+# DATE: 06/12/2019                            #
 ###############################################
 
 # Content:

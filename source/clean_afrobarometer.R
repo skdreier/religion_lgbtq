@@ -5,10 +5,10 @@
 # CODE TO CLEAN & TRANSFORM AFROBAROMETER     #
 # AFROBAORMETER DATA                          #
 #                                             #
-# Code by S. Winkler                          #
+# Code lead: S. Winkler                       #
 #                                             #
-# R version 3.5.2 (2018-12-20)                #
-# DATE: 5/17/2019                             #
+#  R version 3.6.0 (2019-04-26)               #
+# DATE: 06/12/2019                            #
 ###############################################
 
 # Content:
@@ -32,7 +32,7 @@ library(forcats) #factor recoding
 ### HERFINDAHL SCORES ############
 ##################################
 
-load(file="data/afrob_with_herf.RData")
+load(file="data/afrob_with_herf.RData")  # saved as "data"
 afro <- data
 
 #################################
