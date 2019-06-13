@@ -36,10 +36,9 @@ We use the merged Afrobaormeter Round 6 data, which is publicly available at: ht
     - Table A.12: Replication of main logit results with control for religious affiliation
     - Table A.22: Replication of main OLS results with religion HHI at region level rather than district
     - Table A.23: Replication of main logit results with religion HHI at region level rather than district
-*NOTE to SARAH*: there is a chunk of code at end of this script (starting around line 680) that creates plots.
-I wasn't sure if we still need it for any of the plots in the paper. If not, let me know and I'll delete it. 
+*NOTE to STEPHEN*: Keep the chunk of code at end of this script here. I think it creates our main plots, but I can't clean it until we figure out our extractdata issue.
 
-`source/robustness.R` runs robustness checks:
+- `source/robustness.R` runs robustness checks:
     - Table A.13: Replace religious HHI with ethnicity HHI (OLS)
     - Table A.14: Replace religious HHI with ethnicity HHI (logit)
     - Table A.15: Effect of religious HHI on other social out-groups (OLS)
@@ -47,20 +46,20 @@ I wasn't sure if we still need it for any of the plots in the paper. If not, let
 *NOTE to SARAH*: there is a chunk of code at end of this script (line 265) that I think can be deleted, but wanted to
 check with you first to make sure it's not used to create tables A.24 and A.25. See my note in script for more. 
 
-`source/robust_district_tolerance_contorl.R` creates district-level average of non-lgbt tolerance, runs main models with this control:
+- `source/robust_district_tolerance_contorl.R` creates district-level average of non-lgbt tolerance, runs main models with this control:
     - Table A.17: Replication of main OLS model with control for district-level social tolerance
     - Table A.18: Replication of main logit model with control for district-level social tolerance
     
-`source/robust_control_media.R` replicates main models with controls for individual level media consumption:
+- `source/robust_control_media.R` replicates main models with controls for individual level media consumption:
     - Table A.20: Replication of main OLS model with control for media consumption
     - Table A.21: Replication of main logit model with control for media consumption
     
-`source/robust_region_fe.R` replicates main models with region and country fixed effects, creates:
+- `source/robust_region_fe.R` replicates main models with region and country fixed effects, creates:
     - Table A.19: Replication of main OLS model with region fixed effect
 
-# NOTES REGARDING OLDER DOCUMENTS
+## NOTES REGARDING OLDER DOCUMENTS
 
-## SCRIPTS WE MIGHT BE ABLE TO DELTE?
+### SCRIPTS WE MIGHT BE ABLE TO DELTE?
 These are scripts that I think we might be able to delete from main repo. We shouldn't delete yet until we can confirm that everything replicates, but can you look at the ones with your name by it to see if you think we use it for anything? 
 
 - Muslim Detail folder?: SARAH, do you remember what this folder was for? I can't recall.
