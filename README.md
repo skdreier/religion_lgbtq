@@ -38,7 +38,7 @@ We use the merged Afrobaormeter Round 6 data, which is publicly available at: ht
     - Table A.23: Replication of main logit results with religion HHI at region level rather than district
 *NOTE to STEPHEN*: Keep the chunk of code at end of this script here. I think it creates our main plots, but I can't clean it until we figure out our extractdata issue.
 
-- `source/robustness.R` runs robustness checks:
+- `source/robust_ethnicity.R` runs robustness checks:
     - Table A.13: Replace religious HHI with ethnicity HHI (OLS)
     - Table A.14: Replace religious HHI with ethnicity HHI (logit)
     - Table A.15: Effect of religious HHI on other social out-groups (OLS)
