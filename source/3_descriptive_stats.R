@@ -13,7 +13,6 @@
 #   - Table A.2                                   #
 #   - Table A.3                                   #
 #                                                 #
-# Coders: S. Winkler and S. Dreier                #
 #                                                 #
 # R version 3.6.0 (2019-04-26)                    #
 # DATE: 06/12/2019                                #
@@ -45,47 +44,6 @@ myData <- data
 ### FIGURE 1: PERCENT DISLIKE LGBTQ NEIGHBOR BY COUNTRY ###
 ### DV DESCRIPTIVE STATISTICS #############################
 ###########################################################
-
-# Label country names and reformat vectors for plot
-myData %<>%
-  dplyr::mutate(ctry = as.factor(COUNTRY), #create logical version of the variable 
-                ctry = fct_recode(ctry,
-                                  "Benin" = "2",
-                                  "Botswana" = "3",
-                                  "Burkina Faso" = "4",
-                                  "Burundi"  = "5",
-                                  "Cameroon"  = "6",
-                                  "Cape Verde"  = "7",
-                                  "Cote d'Ivoire"  = "8",
-                                  "Gabon"  = "10",
-                                  "Ghana"  = "11",
-                                  "Guinea"  = "12",
-                                  "Kenya"  = "13",
-                                  "Lesotho"  = "14",
-                                  "Liberia"  = "15",
-                                  "Madagascar"  = "16",
-                                  "Malawi"  = "17",
-                                  "Mali"  = "18",
-                                  "Mauritius"  = "19",
-                                  "Morocco"  = "20",
-                                  "Mozambique"  = "21",
-                                  "Namibia"  = "22",
-                                  "Niger"  = "23",
-                                  "Nigeria"  = "24",
-                                  "Sao Tome & Principe"  = "25",
-                                  "Senegal"  = "26",
-                                  "Sierra Leone"  = "27",
-                                  "South Africa"  = "28",
-                                  "Swaziland"  = "30",
-                                  "Tanzania" = "31",
-                                  "Togo" = "32",
-                                  "Tunisia" = "33",
-                                  "Uganda" = "34",
-                                  "Zambia" = "35",
-                                  "Zimbabwe" = "36"  ),
-                ctry = as.character(ctry),
-                sexuality2 = as.numeric(sexuality2)-1
-  )
 
 # Omit NAs on sexuality2 for mean calculations
 meanData <- na.omit(dplyr::select(myData, ctry, sexuality2))
@@ -121,7 +79,7 @@ sorted <- plot_data[ rev(order(plot_data$mean)) ,]
 row.names(sorted) = c(1:34)
 
 # PLOT FIGURE 1: Percent who would dislike having an LGBTQ neighbor (by country)
-pdf(file="figures/1_dv_ctry.pdf",width=5,height=5)
+pdf(file="figures/1_dv_ctryTEST.pdf",width=5,height=5)
 par(mai=c(.7,1,0.35,1.2))
 plot(sorted$mean, nrow(sorted):1, type="p", xlim =c(0,1),
      pch=16, cex=.7, yaxt="n", xaxt="n", ylab="", xlab="", bty="n", cex.main=.9, cex.axis=.9)
@@ -140,16 +98,6 @@ dev.off()
 ### FIGURE 2A: DISTRIBUTION OF ####
 ### UNBINNED DEPENDENT VARIABLE ###
 ###################################
-
-# Invert Herf so that E(0:1) where 1 is more heterogenous district
-myData$herf_ethn_reg <- 1.00 - myData$herf_ethn_reg
-myData$herf_ethn_dist <- 1.00 - myData$herf_ethn_dist
-myData$herf_relig_reg <- 1.00 - myData$herf_relig_reg
-myData$herf_relig_dist <- 1.00 - myData$herf_relig_dist
-myData$herf_relig_bin_reg <- 1.00 - myData$herf_relig_bin_reg
-myData$herf_relig_bin_dist <- 1.00 - myData$herf_relig_bin_dist
-myData$herf_pol_reg <- 1.00 - myData$herf_pol_reg
-myData$herf_pol_dist <- 1.00 - myData$herf_pol_dist
 
 myData %<>% 
   mutate(sexuality4 = as.factor(sexuality), #Create new variable
@@ -195,10 +143,10 @@ dv_plot1 <- #plot for logical dependent variable (Figure 2b)
 ggsave(filename = "figures/2b_dv_distribution_binned.png", #Save it to directory
        plot = dv_plot1)
 
-#####################################
-### FIGURE 3A: DISTRIBUTION OF ######
-### UNBINNED RELIGIOUS HERFINDAHL ###
-#####################################
+########################################
+### FIGURE 3A: DISTRIBUTION OF IV ######
+### UNBINNED RELIGIOUS HERFINDAHL ######
+########################################
 
 sub <- # subset to only the unique districts
   unique(data.frame(myData$DISTRICT, myData$herf_relig_dist, myData$herf_relig_bin_dist))
@@ -217,10 +165,10 @@ iv_plot1 <- # plot independent variable based on original religion categories (F
 ggsave(filename = "figures/3a_iv_distribution.png", #Save it to directory
        plot = iv_plot1)
 
-#####################################
-### FIGURE 3B: DISTRIBUTION OF ######
-### BINNED RELIGIOUS HERFINDAHL #####
-#####################################
+########################################
+### FIGURE 3B: DISTRIBUTION OF IV ######
+### BINNED RELIGIOUS HERFINDAHL ########
+########################################
 
 iv_plot2 <- # plot independent variable based on binned religion categories (Figure 3b)
   ggplot(data = sub, aes(x = myData.herf_relig_bin_dist)) +

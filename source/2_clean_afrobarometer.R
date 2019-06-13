@@ -5,7 +5,6 @@
 # CODE TO CLEAN & TRANSFORM AFROBAROMETER     #
 # AFROBAORMETER DATA                          #
 #                                             #
-# Code lead: S. Winkler                       #
 #                                             #
 #  R version 3.6.0 (2019-04-26)               #
 # DATE: 06/12/2019                            #
@@ -211,9 +210,60 @@ afro <- dplyr::rename(afro, sample_size_dist=size_sample_cty)
 afro <- dplyr::rename(afro, sample_size_reg=size_sample_reg)
 afro <- dplyr::rename(afro, DISTRICT=COUNTY)
 
+# Invert Herf so that E(0:1) where 1 is more heterogenous district
+afro$herf_ethn_reg <- 1.00 - afro$herf_ethn_reg
+afro$herf_ethn_dist <- 1.00 - afro$herf_ethn_dist
+afro$herf_relig_reg <- 1.00 - afro$herf_relig_reg
+afro$herf_relig_dist <- 1.00 - afro$herf_relig_dist
+afro$herf_relig_bin_reg <- 1.00 - afro$herf_relig_bin_reg
+afro$herf_relig_bin_dist <- 1.00 - afro$herf_relig_bin_dist
+afro$herf_pol_reg <- 1.00 - afro$herf_pol_reg
+afro$herf_pol_dist <- 1.00 - afro$herf_pol_dist
+
+# Label country names for various plots
+afro %<>%
+  dplyr::mutate(ctry = as.factor(COUNTRY), #create logical version of the variable 
+                ctry = fct_recode(ctry,
+                                  "Benin" = "2",
+                                  "Botswana" = "3",
+                                  "Burkina Faso" = "4",
+                                  "Burundi"  = "5",
+                                  "Cameroon"  = "6",
+                                  "Cape Verde"  = "7",
+                                  "Cote d'Ivoire"  = "8",
+                                  "Gabon"  = "10",
+                                  "Ghana"  = "11",
+                                  "Guinea"  = "12",
+                                  "Kenya"  = "13",
+                                  "Lesotho"  = "14",
+                                  "Liberia"  = "15",
+                                  "Madagascar"  = "16",
+                                  "Malawi"  = "17",
+                                  "Mali"  = "18",
+                                  "Mauritius"  = "19",
+                                  "Morocco"  = "20",
+                                  "Mozambique"  = "21",
+                                  "Namibia"  = "22",
+                                  "Niger"  = "23",
+                                  "Nigeria"  = "24",
+                                  "Sao Tome & Principe"  = "25",
+                                  "Senegal"  = "26",
+                                  "Sierra Leone"  = "27",
+                                  "South Africa"  = "28",
+                                  "Swaziland"  = "30",
+                                  "Tanzania" = "31",
+                                  "Togo" = "32",
+                                  "Tunisia" = "33",
+                                  "Uganda" = "34",
+                                  "Zambia" = "35",
+                                  "Zimbabwe" = "36"  ),
+                ctry = as.character(ctry),
+                sexuality2 = as.numeric(sexuality2)-1
+  )
+
 # Subset data to only what we need for analysis
 data <-
-  dplyr::select(afro, RESPNO, ethn, relig, relig_bin, COUNTRY, URBRUR, REGION, DISTRICT,
+  dplyr::select(afro, RESPNO, ethn, relig, relig_bin, COUNTRY, ctry, URBRUR, REGION, DISTRICT,
                 herf_ethn_reg, herf_ethn_dist, maj_ethn_reg, maj_ethn_dist,
                 herf_relig_reg, herf_relig_dist, maj_relig_reg, maj_relig_dist,
                 herf_relig_bin_reg, herf_relig_bin_dist, maj_relig_bin_reg, maj_relig_bin_dist,

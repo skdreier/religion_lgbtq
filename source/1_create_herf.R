@@ -9,7 +9,6 @@
 #   - Data with Herfindahl calculations       #
 #   - Statistics for Tables A.4 and A.5       #
 #                                             #
-# Code lead: S. Dreier                        #
 #                                             #
 #  R version 3.6.0 (2019-04-26)               #
 # DATE: 06/12/2019                            #
