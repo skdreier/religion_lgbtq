@@ -46,7 +46,7 @@ We use the merged Afrobaormeter Round 6 data, which is publicly available at: ht
 *NOTE to SARAH*: there is a chunk of code at end of this script (line 265) that I think can be deleted, but wanted to
 check with you first to make sure it's not used to create tables A.24 and A.25. See my note in script for more. 
 
-- [robust_district_tolerance_contorl.R](source/robust_district_tolerance_contorl.R) creates district-level average of non-lgbt tolerance, runs main models with this control:
+- [robust_district_tolerance_control.R](source/robust_district_tolerance_control.R) creates district-level average of non-lgbt tolerance, runs main models with this control:
     - Table A.17: Replication of main OLS model with control for district-level social tolerance
     - Table A.18: Replication of main logit model with control for district-level social tolerance
     
@@ -54,7 +54,7 @@ check with you first to make sure it's not used to create tables A.24 and A.25. 
     - Table A.20: Replication of main OLS model with control for media consumption
     - Table A.21: Replication of main logit model with control for media consumption
     
-- [obust_region_fe.R](source/robust_region_fe.R) replicates main models with region and country fixed effects, creates:
+- [robust_region_fe.R](source/robust_region_fe.R) replicates main models with region and country fixed effects, creates:
     - Table A.19: Replication of main OLS model with region fixed effect
 
 ## NOTES REGARDING OLDER DOCUMENTS
