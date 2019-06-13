@@ -31,17 +31,8 @@ library(stargazer)
 ### AFROBAROMETER DATA #####
 ############################
 
-myData <- read.csv("data/clean_afrobarometer.csv", header = TRUE) 
-
-# Invert Herf so that E(0:1) where 1 is more heterogenous district
-myData$herf_ethn_reg <- 1.00 - myData$herf_ethn_reg
-myData$herf_ethn_dist <- 1.00 - myData$herf_ethn_dist
-myData$herf_relig_reg <- 1.00 - myData$herf_relig_reg
-myData$herf_relig_dist <- 1.00 - myData$herf_relig_dist
-myData$herf_relig_bin_reg <- 1.00 - myData$herf_relig_bin_reg
-myData$herf_relig_bin_dist <- 1.00 - myData$herf_relig_bin_dist
-myData$herf_pol_reg <- 1.00 - myData$herf_pol_reg
-myData$herf_pol_dist <- 1.00 - myData$herf_pol_dist
+load(file="data/clean_afrobarometer.RData") # saved as "data"
+myData <- data
 
 #####################################
 ### REPLICATE MAIN MODELS WITH    ###

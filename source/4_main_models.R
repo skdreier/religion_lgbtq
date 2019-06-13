@@ -45,7 +45,6 @@ library(MASS) #polr to run probit models
 
 load(file="data/clean_afrobarometer.RData") # saved as "data"
 myData <- data
-myData$COUNTRY <- myData$ctry # replace original country number w recoded country name variable for main analyses
 
 ###################################
 ### RUN MAIN OLS & LOGIT MODELS ###
@@ -62,7 +61,7 @@ model <-
   as.numeric(religiosity) + as.numeric(internet) + 
   as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + 
   as.numeric(tol_hiv2) + as.numeric(tol_immig2) + 
-  as.factor(COUNTRY) 
+  as.factor(ctry) 
 
 mdata <- extractdata(model, #extract data to only include what is in the model
                      myData, 
@@ -84,7 +83,7 @@ model <-
   as.numeric(religiosity) + as.numeric(internet) +
   as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + 
   as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY)
+  as.factor(ctry)
 
 mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE) 
 
@@ -103,7 +102,7 @@ model <-
   as.numeric(religiosity) + as.numeric(internet) +
   as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + 
   as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY) 
+  as.factor(ctry) 
 
 mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE)
 
@@ -123,7 +122,7 @@ model <-
   as.numeric(religiosity) + as.numeric(internet) +
   as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + 
   as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY) 
+  as.factor(ctry) 
 
 mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE)
 
