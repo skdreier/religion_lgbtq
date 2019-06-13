@@ -664,6 +664,7 @@ stargazer(logit.result.1, logit.result.2, logit.result.3, logit.result.5,
 ##### Plotting Model 3 (Logit and Ordered Logit) ###############
 ################################################################
 
+############ FIGURE 4 ##############
 ## plotting simulated results ##
 source("~/Dropbox/Current_Projects/Af_LGBT_Tolerance_JL_SW_SD/source/multiplot_code_lc.R")
 library(Zelig)
@@ -750,6 +751,9 @@ dummy.dcse.3 <- logit.result.3
 ###################
 # ORDERED MODEL 3 # 
 ###################
+
+
+############ FIGURE 5A AND 5B ##############
 
 # recode var for interpretation (ordered model): 1-3
 myData$sexuality_ordered <- myData$sexuality 
@@ -887,6 +891,9 @@ ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist)) + # xlim(0,.9) + ylim(
 #   annotate("text", x = .6, y=.09, label = "Pr (Not Opposing LGBT Neighbors)", color="blue") +
 #   annotate("text", x = .45, y=.035, label = "Pr (Opposing LGBT Neighbors,\nbut not strongly)", color="orange") 
 #   # + ggsave("model3_ordered_c.png", device="png")
+
+
+###############################################################################
 
 ordered.plot.3 <- zmod
 ordered.dcse.3 <- ordered.result3.dcse
