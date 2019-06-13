@@ -13,19 +13,19 @@ Sarah Dreier, James Long, and Stephen Winkler.
 We use the merged Afrobaormeter Round 6 data, which is publicly available at: http://afrobarometer.org/data/merged-data. Follow the source R scripts (below) to download directly from the Afrob website. Alternatively, download this dataset and save it in a folder within your directory. Make sure the downloaded dataset is named: `merged_r6_data_2016_36countries2.sav`.  
 
 ## Build Scripts
-- `source/create_herf.R` reads in the Afrobarometer data from its web source [Afrobarometer.org](http://afrobarometer.org/data/merged-data), calculates Herfindahl scores for key "diversity" variables, saves the new dataset ("data") as: `data/afrob_with_herf.RData`, and produces statistics for Tables A.4 and A.5.
+- `source/1_create_herf.R` reads in the Afrobarometer data from its web source [Afrobarometer.org](http://afrobarometer.org/data/merged-data), calculates Herfindahl scores for key "diversity" variables, saves the new dataset ("data") as: `data/afrob_with_herf.RData`, and produces statistics for Tables A.4 and A.5.
 
-- `source/clean_afrobarometer.R` transforms and cleans variables used in the analysis, subsets those variables into a new dataset ("data"), and saves it as: `data/clean_afrobarometer.RData`.
+- `source/2_clean_afrobarometer.R` transforms and cleans variables used in the analysis, subsets those variables into a new dataset ("data"), and saves it as: `data/clean_afrobarometer.RData`.
 
 ## Analysis and Outputs
-- `source/descriptive_stats.R` generates descriptive plots/tables:
+- `source/3_descriptive_stats.R` generates descriptive plots/tables:
     - Figure 1: Percent of respondents who dislike LGBTQ by country (DV)
     - Figure 2a & 2b: Distribution of dependent variable
     - Figure 3a & 3b: Distribution of independent variable
     - Table A.2: Spearman correlations of tolerance variables 
     - Table A.3: Descriptive statistics for model covariates **SW: This code doesn't run for me?**
     
-- `source/main_models.R` generates tables for main models and various replications of main models:
+- `source/4_main_models.R` generates tables for main models and various replications of main models:
     - Table 1: Main OLS results
     - Table A.6: Main logit results
     - Table A.7: Main ordered probit results
