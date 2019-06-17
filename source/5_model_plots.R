@@ -162,7 +162,7 @@ ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist)) + # xlim(0,.9) + ylim(
         ) +
   
   annotate("text", x = .38, y=.08, label = "Pr (Not Opposing LGBT Neighbors)", color="blue", size=5.5) +
-  ggsave("figures/5a_model3_ordered_tolerate.png", device="png")
+  ggsave("figures/5b_model3_ordered_tolerate.png", device="png")
 
 
 ################################################
