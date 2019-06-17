@@ -7,7 +7,7 @@
 #                                             #
 #                                             #
 #  R version 3.6.0 (2019-04-26)               #
-# DATE: 06/12/2019                            #
+# DATE: 06/17/2019                            #
 ###############################################
 
 # Content:
@@ -219,6 +219,13 @@ afro$herf_relig_bin_reg <- 1.00 - afro$herf_relig_bin_reg
 afro$herf_relig_bin_dist <- 1.00 - afro$herf_relig_bin_dist
 afro$herf_pol_reg <- 1.00 - afro$herf_pol_reg
 afro$herf_pol_dist <- 1.00 - afro$herf_pol_dist
+
+# reformat vectors for analysis
+afro$education <- as.numeric(afro$education)
+afro$water_access <- as.numeric(afro$water_access)
+afro$urban <- as.numeric(afro$urban)
+afro$religiosity <- as.numeric(afro$religiosity)
+afro$internet <- as.numeric(afro$internet)
 
 # Label country names for various plots
 afro %<>%

@@ -18,10 +18,10 @@
 #   - Table A.23                              #
 #                                             #
 # AFROBAORMETER DATA                          #  
-# R version 3.5.2 (2018-12-20)                #
+# R version 3.6.0 (2019-04-26)                #
 # NOTE: Not compatible with newer R versions  #
 #                                             #
-# DATE: 06/12/2019                            # 
+# DATE: 06/17/2019                            # 
 ###############################################
 
 rm(list=ls())
@@ -32,11 +32,14 @@ rm(list=ls())
 
 library(magrittr) #pipe function
 library(dplyr) #transformations
-library(simcf) #extractdata
 library(multiwayvcov) #for clustered std err
 library(lmtest) #coeftest for clustered std err
 library(stargazer) #for latex output
 library(MASS) #polr to run probit models
+library(devtools) #simcf
+
+install_github("chrisadolph/simcf") # github source is compatible w recent R versions
+library(simcf) #extractdata
 
 ############################
 ### LOAD CLEAN SUBSET OF ###    
@@ -53,15 +56,11 @@ myData <- data
 
 # Model 1: Religious Herf 
 model <- 
-  sexuality2 ~ 
-  herf_relig_bin_dist + 
+  sexuality2 ~ herf_relig_bin_dist + 
   christian + muslim + 
-  female + as.numeric(age) + as.numeric(education) + 
-  as.numeric(water_access) + as.numeric(urban) + 
-  as.numeric(religiosity) + as.numeric(internet) + 
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + 
-  as.numeric(tol_hiv2) + as.numeric(tol_immig2) + 
-  as.factor(ctry) 
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry)
 
 mdata <- extractdata(model, #extract data to only include what is in the model
                      myData, 
@@ -75,14 +74,10 @@ logit.result.1 <- coeftest(logit.result.1, vcov. = function(x) cluster.vcov(x, ~
 
 # Model 2: Majority Religion
 model <- 
-  sexuality2 ~ 
-  maj_relig_bin_dist +
+  sexuality2 ~ maj_relig_bin_dist +
   christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + 
-  as.numeric(water_access) + as.numeric(urban) + 
-  as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + 
-  as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
   as.factor(ctry)
 
 mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE) 
@@ -94,15 +89,11 @@ logit.result.2 <- coeftest(logit.result.2, vcov. = function(x) cluster.vcov(x, ~
 
 # Model 3: Religious Herf + Majority Religion
 model <- 
-  sexuality2 ~ 
-  herf_relig_bin_dist +  maj_relig_bin_dist +
-  christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + 
-  as.numeric(water_access) + as.numeric(urban) + 
-  as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + 
-  as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(ctry) 
+  sexuality2 ~ herf_relig_bin_dist +  
+  maj_relig_bin_dist + christian + muslim +
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry)
 
 mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE)
 
@@ -117,12 +108,9 @@ model <-
   herf_relig_bin_dist + maj_relig_bin_dist +
   herf_ethn_dist + maj_ethn_dist + 
   christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + 
-  as.numeric(water_access) + as.numeric(urban) + 
-  as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + 
-  as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(ctry) 
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry)
 
 mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE)
 
@@ -147,7 +135,7 @@ stargazer(lm.result.1, lm.result.2, lm.result.3,  lm.result.5,
           dep.var.labels.include = FALSE,
           covariate.labels = main.vars,
           title = "Effect of District-Level Religious Diversity on LGBT Attitudes (LPM)",
-          omit= c("COUNTRY", "Constant"),
+          omit= c("ctry", "Constant"),
           notes = c("All models include country fixed effects. Standard errors are clustered at the district level.")
           )
 
@@ -173,7 +161,7 @@ stargazer(logit.result.1, logit.result.2, logit.result.3, logit.result.5,
           dep.var.labels.include = FALSE,
           covariate.labels = main.vars,
           title = "Effect of District-Level Religious Diversity on LGBT Attitudes (Logit)",
-          omit= c("COUNTRY", "Constant"),
+          omit= c("ctry", "Constant"),
           notes = c("All models include country fixed effects. Standard errors are clustered at the district level.")
 )
 
@@ -199,22 +187,15 @@ c1   <- function(data,fm, cluster){
 
 # Model 1: Religious Herf
 model <- 
-  sexuality ~ 
-  herf_relig_bin_dist +
+  sexuality ~ herf_relig_bin_dist +
   christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + 
-  as.numeric(water_access) + as.numeric(urban) + 
-  as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) +
-  as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY)
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry)
 
 mdata <- extractdata(model, myData, na.rm=TRUE)
 
-probit.result1 <- polr(model,
-                       data = mdata,
-                       method = "probit",
-                       Hess = TRUE)
+probit.result1 <- polr(model, data = mdata, method = "probit", Hess = TRUE)
 
 # Apply cluster function
 # formula here is data, model, cluster. This code clusters at the district level
@@ -223,22 +204,15 @@ probit.result1.cluster <- c1(mdata, probit.result1, myData$DISTRICT[obs2])
 
 # Model 2: Majority Religion
 model <- 
-  sexuality ~ 
-  maj_relig_bin_dist +
+  sexuality ~ maj_relig_bin_dist +
   christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + 
-  as.numeric(water_access) + as.numeric(urban) + 
-  as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + 
-  as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY) 
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry) 
 
 mdata <- extractdata(model, myData, na.rm=TRUE)
 
-probit.result2 <- polr(model,
-                       data = mdata,
-                       method = "probit",
-                       Hess = TRUE)
+probit.result2 <- polr(model, data = mdata, method = "probit", Hess = TRUE)
 
 # Apply cluster function
 obs2 <- as.numeric(rownames(mdata, probit.result2, mdata$DISTRICT)) 
@@ -246,23 +220,15 @@ probit.result2.cluster <- c1(mdata, probit.result2, myData$DISTRICT[obs2])
 
 # Model 3: Religious Herf + Majority Religion
 model <- 
-  sexuality ~   
-  herf_relig_bin_dist +
-  maj_relig_bin_dist +
-  christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + 
-  as.numeric(water_access) + as.numeric(urban) + 
-  as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + 
-  as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY) 
+  sexuality ~ herf_relig_bin_dist +
+  maj_relig_bin_dist + christian + muslim +
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry)
 
 mdata <- extractdata(model, myData, na.rm=TRUE)
 
-probit.result3 <- polr(model,
-                       data = mdata,
-                       method = "probit",
-                       Hess = TRUE)
+probit.result3 <- polr(model, data = mdata, method = "probit", Hess = TRUE)
 
 # Apply cluster function
 obs2 <- as.numeric(rownames(mdata, probit.result3, mdata$DISTRICT)) 
@@ -274,19 +240,13 @@ model <-
   herf_relig_bin_dist + maj_relig_bin_dist +
   herf_ethn_dist + maj_ethn_dist + 
   christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + 
-  as.numeric(water_access) + as.numeric(urban) + 
-  as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + 
-  as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY) 
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry)
 
 mdata <- extractdata(model, myData, na.rm=TRUE) 
 
-probit.result5 <- polr(model,
-                       data = mdata,
-                       method = "probit",
-                       Hess = TRUE)
+probit.result5 <- polr(model, data = mdata, method = "probit", Hess = TRUE)
 
 # Apply cluster function
 obs2 <- as.numeric(rownames(mdata, probit.result5, mdata$DISTRICT)) 
@@ -303,7 +263,7 @@ stargazer(probit.result1.cluster, probit.result2.cluster, probit.result3.cluster
           dep.var.labels.include = FALSE,
           covariate.labels = main.vars,
           title = "Effect of District-Level Religious Diversity on LGBTQ Attitudes (Ordered Probit)",
-          omit= "COUNTRY",
+          omit= "ctry",
           notes = c("All models include country fixed effects. Standard errors are clustered at the district level.") 
 )
 
@@ -315,15 +275,11 @@ stargazer(probit.result1.cluster, probit.result2.cluster, probit.result3.cluster
 
 # Model 1: Religious Herf
 model <- 
-  sexuality2 ~ 
-  herf_relig_dist +
+  sexuality2 ~ herf_relig_dist +
   christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + 
-  as.numeric(water_access) + as.numeric(urban) + 
-  as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + 
-  as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY)
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry)
 
 mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE)
 
@@ -334,15 +290,11 @@ logit.result.1 <- coeftest(logit.result.1, vcov. = function(x) cluster.vcov(x, ~
 
 # Model 2: Majority Religion
 model <- 
-  sexuality2 ~ 
-  maj_relig_dist +
+  sexuality2 ~ maj_relig_dist +
   christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + 
-  as.numeric(water_access) + as.numeric(urban) + 
-  as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + 
-  as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY)
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry)
 
 mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE)
 
@@ -353,15 +305,11 @@ logit.result.2 <- coeftest(logit.result.2, vcov. = function(x) cluster.vcov(x, ~
 
 # Model 3: Religious Herf + Majority Religion
 model <- 
-  sexuality2 ~ 
-  herf_relig_dist +  maj_relig_dist +
-  christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + 
-  as.numeric(water_access) + as.numeric(urban) + 
-  as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + 
-  as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY)
+  sexuality2 ~ herf_relig_dist +  
+  maj_relig_dist + christian + muslim +
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry)
 
 mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE) 
 
@@ -376,12 +324,9 @@ model <-
   herf_relig_dist + maj_relig_dist +
   herf_ethn_dist + maj_ethn_dist + 
   christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + 
-  as.numeric(water_access) + as.numeric(urban) + 
-  as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + 
-  as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY)
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry)
 
 mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE) 
 
@@ -407,7 +352,7 @@ stargazer(lm.result.1, lm.result.2, lm.result.3, lm.result.5,
           dep.var.caption = "DV: Homosexual as Neighbor (0: dislike, 1: don't care or like)",
           dep.var.labels.include = FALSE,
           title = "Effect of District-Level Religious Diversity on LGBT Attitudes (OLS)",
-          omit= "COUNTRY",
+          omit= "ctry",
           notes = c("All models include country fixed effects. Standard errors are clustered at the district level.")
 )
 
@@ -420,7 +365,7 @@ stargazer(logit.result.1, logit.result.2, logit.result.3, logit.result.5,
           dep.var.caption = "DV: Homosexual as Neighbor (0: dislike, 1: don't care or like)",
           dep.var.labels.include = FALSE,
           title = "Effect of District-Level Religious Diversity on LGBT Attitudes (Logit)",
-          omit= "COUNTRY",
+          omit= "ctry",
           notes = c("All models include country fixed effects. Standard errors are clustered at the district level.")
 )
 
@@ -435,12 +380,9 @@ stargazer(logit.result.1, logit.result.2, logit.result.3, logit.result.5,
 model <- 
   sexuality2 ~ 
   herf_relig_bin_dist +
-  female + as.numeric(age) + as.numeric(education) + 
-  as.numeric(water_access) + as.numeric(urban) + 
-  as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + 
-  as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY) + as.factor(relig)
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry) + as.factor(relig)
 
 mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE) 
 
@@ -453,12 +395,9 @@ logit.result.1 <- coeftest(logit.result.1, vcov. = function(x) cluster.vcov(x, ~
 model <- 
   sexuality2 ~ 
   maj_relig_bin_dist +
-  female + as.numeric(age) + as.numeric(education) + 
-  as.numeric(water_access) + as.numeric(urban) + 
-  as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + 
-  as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY) + as.factor(relig)
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry) + as.factor(relig)
 
 mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE) 
 
@@ -471,12 +410,9 @@ logit.result.2 <- coeftest(logit.result.2, vcov. = function(x) cluster.vcov(x, ~
 model <- 
   sexuality2 ~ 
   herf_relig_bin_dist +  maj_relig_bin_dist +
-  female + as.numeric(age) + as.numeric(education) + 
-  as.numeric(water_access) + as.numeric(urban) + 
-  as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + 
-  as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY) + as.factor(relig)
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry) + as.factor(relig)
 
 mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE) 
 
@@ -490,12 +426,9 @@ model <-
   sexuality2 ~ 
   herf_relig_bin_dist + maj_relig_bin_dist +
   herf_ethn_dist + maj_ethn_dist + 
-  female + as.numeric(age) + as.numeric(education) + 
-  as.numeric(water_access) + as.numeric(urban) + 
-  as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + 
-  as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY) + as.factor(relig)
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry) + as.factor(relig)
 
 mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE) 
 
@@ -521,7 +454,7 @@ stargazer(lm.result.1, lm.result.2, lm.result.3, lm.result.5,
           dep.var.caption = "DV: Homosexual as Neighbor (0: dislike, 1: don't care or like)",
           dep.var.labels.include = FALSE,
           title = "Effect of District-Level Religious Diversity on LGBT Attitudes (OLS)",
-          omit = "COUNTRY",
+          omit = "ctry",
           notes = c("All models include country fixed effects. 
                     Standard errors are clustered at the district level.")
           )
@@ -534,7 +467,7 @@ stargazer(logit.result.1, logit.result.2, logit.result.3, logit.result.5,
           dep.var.caption = "DV: Homosexual as Neighbor (0: dislike, 1: don't care or like)",
           dep.var.labels.include = FALSE,
           title = "Effect of District-Level Religious Diversity on LGBT Attitudes (Logit)",
-          omit= "COUNTRY",
+          omit= "ctry",
           notes = c("All models include country fixed effects. Standard errors are clustered at the district level.")
 )
 
@@ -550,12 +483,9 @@ model <-
   sexuality2 ~ 
   herf_relig_bin_reg + 
   christian + muslim + 
-  female + as.numeric(age) + as.numeric(education) + 
-  as.numeric(water_access) + as.numeric(urban) + 
-  as.numeric(religiosity) + as.numeric(internet) + 
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + 
-  as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY) 
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry)
 
 mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE) 
 
@@ -569,12 +499,9 @@ model <-
   sexuality2 ~ 
   maj_relig_bin_dist +
   christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + 
-  as.numeric(water_access) + as.numeric(urban) + 
-  as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + 
-  as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY) 
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry)
 
 mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE) 
 
@@ -588,12 +515,9 @@ model <-
   sexuality2 ~ 
   herf_relig_bin_reg +  maj_relig_bin_dist +
   christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + 
-  as.numeric(water_access) + as.numeric(urban) + 
-  as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + 
-  as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY) 
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry)
 
 mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE) 
 
@@ -608,12 +532,9 @@ model <-
   herf_relig_bin_reg + maj_relig_bin_dist +
   herf_ethn_dist + maj_ethn_dist + 
   christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + 
-  as.numeric(water_access) + as.numeric(urban) + 
-  as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + 
-  as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY) 
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry)
 
 mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE) 
 
@@ -637,7 +558,7 @@ stargazer(lm.result.1, lm.result.2, lm.result.3, lm.result.5,
           dep.var.labels.include = FALSE,
           covariate.labels = main.vars,
           title = "Effect of Region-Level Religious Diversity on LGBT Attitudes (OLS)",
-          omit= "COUNTRY",
+          omit= "ctry",
           notes = c("All models include country fixed effects. Standard errors are clustered at the district level.")
 )
 
@@ -649,645 +570,10 @@ stargazer(logit.result.1, logit.result.2, logit.result.3, logit.result.5,
           dep.var.labels.include = FALSE,
           covariate.labels = main.vars,
           title = "Effect of Region-Level Religious Diversity on LGBT Attitudes (Logit)",
-          omit= "COUNTRY",
+          omit= "ctry",
           notes = c("All models include country fixed effects. Standard errors are clustered at the district level.")
 )
 
-##########################################################################################################
-##########################################################################################################
-###################################### END? ##############################################################
-##########################################################################################################
-
-# Sarah: The code below looks like it's mostly for creating plots. Do we need it or can we delete? 
-
-################################################################
-##### Plotting Model 3 (Logit and Ordered Logit) ###############
-################################################################
-
-############ FIGURE 4 ##############
-## plotting simulated results ##
-source("~/Dropbox/Current_Projects/Af_LGBT_Tolerance_JL_SW_SD/source/multiplot_code_lc.R")
-library(Zelig)
-library(ZeligChoice)
-library(magrittr)
-
-setwd("~/Dropbox/Current_Projects/Af_LGBT_Tolerance_JL_SW_SD/plots/sims")
-
-xvar <- "Inverse Religious HHI"
-xlab_name <- "Inverse Religious HHI"
-
-# Estimate: Dummy Model 3
-model <-
-  sexuality2 ~
-  herf_relig_bin_dist +  maj_relig_bin_dist +
-  christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + as.numeric(water_access) + as.numeric(urban) + as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY) + sample_size_dist #remove sample size for main models
-
-mdata <- extractdata(model, #extract data to only include what is in the model
-                     myData, 
-                     extra = ~DISTRICT + RESPNO, #add DISTRICT so we can get district-clustered sd err, and RESPNO for reference
-                     na.rm=TRUE) 
-
-logit.result.3 <- glm(model, family=binomial, data=mdata) #save logit result 
-logit.result.3 <- coeftest(logit.result.3, vcov. = function(x) cluster.vcov(x, ~ DISTRICT)) #add DCSE to logit result
-
-mdata$age <- as.numeric(mdata$age)
-mdata$education <- as.numeric(mdata$education)
-mdata$water_access <- as.numeric(mdata$water_access)
-mdata$urban <- as.numeric(mdata$urban)
-mdata$religiosity <- as.numeric(mdata$religiosity)
-mdata$internet <- as.numeric(mdata$internet)
-mdata$tol_relig2 <- as.numeric(mdata$tol_relig2)
-mdata$tol_ethnic2 <- as.numeric(mdata$tol_ethnic2)
-mdata$tol_hiv2 <- as.numeric(mdata$tol_hiv2)
-mdata$tol_immig2 <- as.numeric(mdata$tol_immig2)
-
-zmod <- zelig(model <-
-                as.factor(sexuality2) ~
-                herf_relig_bin_dist +  maj_relig_bin_dist +
-                christian + muslim +
-                female + age + education + water_access + urban + religiosity + internet + 
-                tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
-                as.factor(COUNTRY) + sample_size_dist #remove sample size for main models
-              , data = mdata, model="logit")
-
-# Set Range for 'continuous' variable
-herf_range <- seq(min(mdata$herf_relig_bin_dist, na.rm=T), max(mdata$herf_relig_bin_dist, na.rm=T), length.out=1000)
-x.out <- setx(zmod, herf_relig_bin_dist = herf_range)
-s.out <- Zelig::sim(zmod, x=x.out)
-
-plotdata <- mv_extract(s.out)
-
-#colnames(plotdata4) <- paste(colnames(plotdata4),col="_4", sep="")
-plot_data_full <- data.frame(plotdata, herf_relig_bin_dist = herf_range)
-
-# PID Covariate #
-ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist))  + #ylim(.03,.08) + xlim(0,.9) +
-  geom_line(aes(y =mean)) +
-  geom_line(aes(y =high), linetype="dashed", color = "blue") +
-  geom_line(aes(y =low), linetype="dashed", color = "blue") +
-  theme_minimal() +
-  labs(
-    title = "Effect of Religious Diversity",
-    subtitle = paste("on toleration of sexual minorities (logit)"),
-    x = paste(xlab_name, "(0 = homogeneous)", sep=" "),
-    y = "Pr (Tolerating LGBT neighbors)"  ) +
-  
-  theme(plot.title = element_text(size=16),
-        plot.subtitle = element_text(size=15),
-    axis.text.x = element_text(size=14), 
-    axis.title.x = element_text(size=14), 
-    axis.text.y = element_text(size=14),
-    axis.title.y = element_text(size=14)) +
-
-  #annotate("text", x = .50, y=.0735, label = "Pr (Accepting LGBT Neighbors )\n95% CI", color = "blue") #+
-  ggsave("model3_dec.png", device="png")
-
-dummy.plot.3 <- zmod
-dummy.dcse.3 <- logit.result.3
-
-###################
-# ORDERED MODEL 3 # 
-###################
-
-
-############ FIGURE 5A AND 5B ##############
-
-# recode var for interpretation (ordered model): 1-3
-myData$sexuality_ordered <- myData$sexuality 
-myData$sexuality_ordered[myData$sexuality==4 | myData$sexuality_ordered==5] <- 3 
-
-model <- 
-  as.factor(sexuality_ordered) ~ 
-  herf_relig_bin_dist +  maj_relig_bin_dist +
-  christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + as.numeric(water_access) + as.numeric(urban) + as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY) #+ sample_size_dist #remove sample size for main models
-
-mdata <- extractdata(model, myData, na.rm=TRUE) 
-
-#####
-ordered.result3.dcse <- polr(model,data = mdata, method = "probit", Hess = TRUE)
-
-#Apply cluster function
-obs2 <- as.numeric(rownames(mdata, ordered.result3.dcse, mdata$DISTRICT)) #forumula here is data, model, cluster. So in this example I am clustering on District
-ordered.result3.dcse <- c1(mdata, ordered.result3.dcse, myData$DISTRICT[obs2]) 
-
-mdata$age <- as.numeric(mdata$age)
-mdata$education <- as.numeric(mdata$education)
-mdata$water_access <- as.numeric(mdata$water_access)
-mdata$urban <- as.numeric(mdata$urban)
-mdata$religiosity <- as.numeric(mdata$religiosity)
-mdata$internet <- as.numeric(mdata$internet)
-mdata$tol_relig2 <- as.numeric(mdata$tol_relig2)
-mdata$tol_ethnic2 <- as.numeric(mdata$tol_ethnic2)
-mdata$tol_hiv2 <- as.numeric(mdata$tol_hiv2)
-mdata$tol_immig2 <- as.numeric(mdata$tol_immig2)
-
-zmod <- zelig(model <- 
-                as.factor(sexuality_ordered) ~ 
-                herf_relig_bin_dist +  maj_relig_bin_dist +
-                christian + muslim + 
-                female + age + education + water_access + urban + religiosity + internet + 
-                tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 +
-                as.factor(COUNTRY) #+ sample_size_dist #remove sample size for main models
-              , data = mdata, model="oprobit")#"ologit")
-
-# Set Range for 'continuous' variable
-herf_range <- seq(min(mdata$herf_relig_bin_dist, na.rm=T), 1, length.out=100)
-x.out <- setx(zmod, herf_relig_bin_dist = herf_range)
-s.out <- Zelig::sim(zmod, x=x.out)
-s.out
-
-plotdata <- mv_extract(s.out)
-plotdata1 <- plotdata[seq(1,nrow(plotdata), 3),] # only looking at people who strongly oppose LGBT neighbors
-plotdata2 <- plotdata[seq(2,nrow(plotdata), 3),] # only looking at people who oppose LGBT neighbors
-plotdata3 <- plotdata[seq(3,nrow(plotdata), 3),] # only looking at people who DON'T OPPOSE LGBT neighbors
-colnames(plotdata2) <- paste(colnames(plotdata2),col="_2", sep="")
-colnames(plotdata3) <- paste(colnames(plotdata3),col="_3", sep="")
-
-plot_data_full <- data.frame(plotdata1, plotdata2, plotdata3, herf_relig_bin_dist = herf_range)
-
-# Pr strongly oppose
-  ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist)) + #ylim(.84,.92) + xlim(0,1) +
-  geom_line(aes(y =mean)) + 
-  geom_line(aes(y =high), linetype="dashed", color="red") + 
-  geom_line(aes(y =low), linetype="dashed", color="red") + 
-  theme_minimal() +
-  labs(
-    title = "Effect of Religious Diversity",
-    subtitle = "on attitudes toward sexual minorities (ordered probit)",
-    x = paste(xlab_name, "(0 = homogeneous)", sep=" ")
-    , y = ""
-    #, y = "Pr( Strongly opposing sexual minorities as neighbors )"  
-  ) +
-  theme(plot.title = element_text(size=22),
-        plot.subtitle = element_text(size=17),
-        axis.text.x = element_text(size=20), 
-        axis.title.x = element_text(size=19), 
-        axis.text.y = element_text(size=20),
-        axis.title.y = element_text(size=17)) +
-  annotate("text", x = .55, y=.915, label = "Pr (Strongly Opposing LGBT Neighbors)", color="red", size=5.5) +
-  ggsave("model3_ordered_p_st_oppose_dec.png", device="png")
-
-# # Pr all oppose (not used in paper)
-# ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist))  + #ylim(.84,.92) + xlim(0,1) +
-#   geom_line(aes(y =mean + mean_2)) + 
-#   geom_line(aes(y =high + high_2), linetype="dashed", color="red") + 
-#   geom_line(aes(y =low + low_2), linetype="dashed", color="red") + 
-#   theme_minimal() +
-#   labs(
-#     title = "Effect of Religious Diversity",
-#     subtitle = paste("on attitudes toward sexual minorities (Model 3, ordered logit)"),
-#     x = paste(xlab_name, "(0 = homogeneous)", sep=" ")
-#     , y = ""
-#     #, y = "Pr( Strongly opposing sexual minorities as neighbors )"  
-#   ) +
-#   annotate("text", x = .7, y=.962, label = "Pr (Opposing LGBT Neighbors)\n95% CI", color="red") +
-#   ggsave("model3_ordered_all_oppose.png", device="png")
-
-# Don't Oppose
-ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist)) + # xlim(0,.9) + ylim(.039,.09) + 
-  geom_line(aes(y =mean_3)) + 
-  geom_line(aes(y =high_3), linetype="dashed", color="blue") + 
-  geom_line(aes(y =low_3), linetype="dashed", color="blue") + 
-  theme_minimal() +
-  labs(
-    title = "Effect of Religious Diversity",
-    subtitle = paste("on attitudes toward sexual minorities (ordered probit)"),
-    x = paste(xlab_name, "(0 = homogeneous)", sep=" ")
-    , y = ""
-    #, y = "Pr( Not opposing sexual minorities as neighbors )"  
-  ) +
-  theme(plot.title = element_text(size=22),
-      plot.subtitle = element_text(size=17),
-      axis.text.x = element_text(size=20), 
-      axis.title.x = element_text(size=19), 
-      axis.text.y = element_text(size=20),
-      axis.title.y = element_text(size=17)) +
-    annotate("text", x = .38, y=.08, label = "Pr (Not Opposing LGBT Neighbors)", color="blue", size=5.5) +
-  ggsave("model3_ordered_p_tolerate_dec.png", device="png")
-# 
-# # PR Oppose (not strongly), Don't Oppose (not used in paper)
-# ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist))  + ylim(.025,.09) + xlim(0,1) +
-#   geom_line(aes(y =mean_2)) + 
-#   geom_line(aes(y =high_2), linetype="dashed", color="orange") + 
-#   geom_line(aes(y =low_2), linetype="dashed", color="orange") + 
-#   theme_minimal() +
-#   geom_line(aes(y =mean_3)) + 
-#   geom_line(aes(y =high_3), linetype="dashed", color="blue") + 
-#   geom_line(aes(y =low_3), linetype="dashed", color="blue") + 
-#   theme_minimal() +
-#   labs(
-#     title = paste("Effect of", xvar, sep=" "),
-#     subtitle = paste("on attitudes toward sexual minorities (Model 3, Ordered)"),
-#     x = paste(xlab_name, "(0 = homogeneous)", sep=" ")
-#     , y = ""
-#     #, y = "Pr( given attitude on sexual minorities as neighbors )"  
-#   ) +
-#   annotate("text", x = .6, y=.09, label = "Pr (Not Opposing LGBT Neighbors)", color="blue") +
-#   annotate("text", x = .45, y=.035, label = "Pr (Opposing LGBT Neighbors,\nbut not strongly)", color="orange") 
-#   # + ggsave("model3_ordered_c.png", device="png")
-
-
-###############################################################################
-
-ordered.plot.3 <- zmod
-ordered.dcse.3 <- ordered.result3.dcse
-
-labs <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
-logit.plot <-   c(0.5031, (0.1047), 4.807, 1.53e-06)
-logit.dcse <-   c(0.5031, (0.1757), 2.864, 4.19e-03)
-ordered.plot <- c(0.4360, (0.0876), "", "")
-ordered.dcse <- c(0.4360, (0.1618), 2.696, 7.03e-03)
-
-x <- t(rbind(labs, logit.dcse, logit.plot, ordered.plot, ordered.dcse))
-x1 <- x[1:2,]
-
-library(xtable)
-xtable(x1)
-
-########################
-# ORDERED MODEL 3: 1-5 #
-########################
-
-myData$sexuality_ordered <- myData$sexuality 
-
-model <- 
-  as.factor(sexuality_ordered) ~ 
-  herf_relig_bin_dist +  maj_relig_bin_dist +
-  christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + as.numeric(water_access) + as.numeric(urban) + as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY) + sample_size_dist #remove sample size for main models
-
-mdata <- extractdata(model, myData, na.rm=TRUE) 
-
-ordered.result3.dcse <- polr(model,data = mdata, method = "logistic", Hess = TRUE)
-
-#Apply cluster function
-obs2 <- as.numeric(rownames(mdata, ordered.result3.dcse, mdata$DISTRICT)) #forumula here is data, model, cluster. So in this example I am clustering on District
-ordered.result3.dcse <- c1(mdata, ordered.result3.dcse, myData$DISTRICT[obs2]) 
-
-mdata$age <- as.numeric(mdata$age)
-mdata$education <- as.numeric(mdata$education)
-mdata$water_access <- as.numeric(mdata$water_access)
-mdata$urban <- as.numeric(mdata$urban)
-mdata$religiosity <- as.numeric(mdata$religiosity)
-mdata$internet <- as.numeric(mdata$internet)
-mdata$tol_relig2 <- as.numeric(mdata$tol_relig2)
-mdata$tol_ethnic2 <- as.numeric(mdata$tol_ethnic2)
-mdata$tol_hiv2 <- as.numeric(mdata$tol_hiv2)
-mdata$tol_immig2 <- as.numeric(mdata$tol_immig2)
-
-zmod <- zelig(model <- 
-                as.factor(sexuality_ordered) ~ 
-                herf_relig_bin_dist +  maj_relig_bin_dist +
-                christian + muslim + 
-                female + age + education + water_access + urban + religiosity + internet + 
-                tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 +
-                as.factor(COUNTRY) + sample_size_dist #remove sample size for main models
-              , data = mdata, model="ologit")
-
-# Set Range for 'continuous' variable
-herf_range <- seq(min(mdata$herf_relig_bin_dist, na.rm=T), 1, length.out=100)
-x.out <- setx(zmod, herf_relig_bin_dist = herf_range)
-s.out <- Zelig::sim(zmod, x=x.out)
-s.out
-
-plotdata <- mv_extract(s.out)
-plotdata1 <- plotdata[seq(1,nrow(plotdata), 5),] # only looking at people who strongly oppose LGBT neighbors
-plotdata2 <- plotdata[seq(2,nrow(plotdata), 5),] # only looking at people who oppose LGBT neighbors
-plotdata3 <- plotdata[seq(3,nrow(plotdata), 5),] # only looking at people who don't care
-plotdata4 <- plotdata[seq(4,nrow(plotdata), 5),] # only looking at people who like
-plotdata5 <- plotdata[seq(5,nrow(plotdata), 5),] # only looking at people who strongly like
-plotdata_tol <- plotdata3 + plotdata4 + plotdata5 
-
-colnames(plotdata2) <- paste(colnames(plotdata2),col="_2", sep="")
-colnames(plotdata_tol) <- paste(colnames(plotdata_tol),col="_tol", sep="")
-plot_data_full <- data.frame(plotdata1, plotdata2, plotdata_tol, herf_relig_bin_dist = herf_range)
-
-# Pr strongly oppose
-ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist))  + #ylim(.84,.92) + xlim(0,1) +
-  geom_line(aes(y =mean)) + 
-  geom_line(aes(y =high), linetype="dashed", color="red") + 
-  geom_line(aes(y =low), linetype="dashed", color="red") + 
-  theme_minimal() +
-  labs(
-    title = "Effect of Religious Diversity",
-    subtitle = "on attitudes toward sexual minorities (ordered logit)",
-    x = paste(xlab_name, "(0 = homogeneous)", sep=" ")
-    , y = ""
-    #, y = "Pr( Strongly opposing sexual minorities as neighbors )"  
-  ) +
-  theme(plot.title = element_text(size=16),
-        plot.subtitle = element_text(size=15),
-        axis.text.x = element_text(size=14), 
-        axis.title.x = element_text(size=14), 
-        axis.text.y = element_text(size=14),
-        axis.title.y = element_text(size=14)) +
-  annotate("text", x = .55, y=.915, label = "Pr (Strongly Opposing LGBT Neighbors)", color="red", size=4.5) +
-  ggsave("model3_ordered5_st_oppose_dec.png", device="png")
-
-# Don't Oppose
-ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist))  + #ylim(.039,.09) + xlim(0,1) +
-  geom_line(aes(y =mean_tol)) + 
-  geom_line(aes(y =high_tol), linetype="dashed", color="blue") + 
-  geom_line(aes(y =low_tol), linetype="dashed", color="blue") + 
-  theme_minimal() +
-  labs(
-    title = "Effect of Religious Diversity",
-    subtitle = paste("on attitudes toward sexual minorities (ordered logit)"),
-    x = paste(xlab_name, "(0 = homogeneous)", sep=" ")
-    , y = ""
-    #, y = "Pr( Not opposing sexual minorities as neighbors )"  
-  ) +
-  theme(plot.title = element_text(size=16),
-        plot.subtitle = element_text(size=15),
-        axis.text.x = element_text(size=14), 
-        axis.title.x = element_text(size=14), 
-        axis.text.y = element_text(size=14),
-        axis.title.y = element_text(size=14)) +
-  annotate("text", x = .4, y=.092, label = "Pr (Not Opposing LGBT Neighbors)", color="blue", size=4.5) +
-  ggsave("model3_ordered5_tolerate_dec.png", device="png")
-# 
-
-ordered.plot <- zmod
-ordered.dcse <- ordered.result3.dcse
-
-labs <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
-logit.plot <-   c(0.5031, (0.1047), 4.807, 1.53e-06)
-logit.dcse <-   c(0.5031, (0.1757), 2.864, 4.19e-03)
-ordered.plot <- c(0.4098, (0.0844), "", "")
-ordered.dcse <- c(0.4098, (0.155), 2.6436, 8.2e-03)
-
-x <- t(rbind(labs, logit.dcse, logit.plot, ordered.plot, ordered.dcse))
-x1 <- x[1:2,]
-
-library(xtable)
-xtable(x1)
-
-################################################################
-##### Plotting Model 5 (Logit and Ordered Logit) ###############
-##### CURRENTLY NOT IN PAPER ###################################
-################################################################
-
-## plotting simulated results ##
-source("~/Dropbox/Current_Projects/Af_LGBT_Tolerance_JL_SW_SD/source/multiplot_code_lc.R")
-library(Zelig)
-library(ZeligChoice)
-library(magrittr)
-
-setwd("~/Dropbox/Current_Projects/Af_LGBT_Tolerance_JL_SW_SD/plots/sims")
-
-xvar <- "Inverse Religious HHI"
-xlab_name <- "Inverse Religious HHI"
-
-# Estimate: Dummy Model 5
-model <-
-  sexuality2 ~
-  herf_relig_bin_dist +  maj_relig_bin_dist +
-  herf_ethn_dist + maj_ethn_dist + 
-  christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + as.numeric(water_access) + as.numeric(urban) + as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY) + sample_size_dist #remove sample size for main models
-
-mdata <- extractdata(model, myData, na.rm=TRUE)
-
-mdata$age <- as.numeric(mdata$age)
-mdata$education <- as.numeric(mdata$education)
-mdata$water_access <- as.numeric(mdata$water_access)
-mdata$urban <- as.numeric(mdata$urban)
-mdata$religiosity <- as.numeric(mdata$religiosity)
-mdata$internet <- as.numeric(mdata$internet)
-mdata$tol_relig2 <- as.numeric(mdata$tol_relig2)
-mdata$tol_ethnic2 <- as.numeric(mdata$tol_ethnic2)
-mdata$tol_hiv2 <- as.numeric(mdata$tol_hiv2)
-mdata$tol_immig2 <- as.numeric(mdata$tol_immig2)
-
-zmod <- zelig(model <-
-                as.factor(sexuality2) ~
-                herf_relig_bin_dist +  maj_relig_bin_dist +
-                herf_ethn_dist + maj_ethn_dist + 
-                christian + muslim +
-                female + age + education + water_access + urban + religiosity + internet + 
-                tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
-                as.factor(COUNTRY) + sample_size_dist #remove sample size for main models
-              , data = mdata, model="logit")
-
-# Set Range for 'continuous' variable
-herf_range <- seq(min(mdata$herf_relig_bin_dist, na.rm=T), max(mdata$herf_relig_bin_dist, na.rm=T), length.out=100)
-x.out <- setx(zmod, herf_relig_bin_dist = herf_range)
-s.out <- Zelig::sim(zmod, x=x.out)
-
-plotdata <- mv_extract(s.out)
-
-#colnames(plotdata4) <- paste(colnames(plotdata4),col="_4", sep="")
-plot_data_full <- data.frame(plotdata, herf_relig_bin_dist = herf_range)
-
-# PID Covariate #
-ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist))  + ylim(.03,.075) + xlim(0,.9) +
-  geom_line(aes(y =mean)) +
-  geom_line(aes(y =high), linetype="dashed", color="red") +
-  geom_line(aes(y =low), linetype="dashed", color="red") +
-  theme_minimal() +
-  labs(
-    title = paste("Effect of", xvar, sep=" "),
-    subtitle = paste("on attitudes toward sexual minorities (Model 5, Logit)"),
-    x = paste(xlab_name, "(0 = homogeneous)", sep=" "),
-    y = "Acceptance of LGBT neighbors"  ) +
-  annotate("text", x = .7, y=.07, label = "95% CI", color="red") +
-  ggsave("model5.png", device="png")
-
-# recode var for interpretation (ordered model)
-myData$sexuality_ordered <- myData$sexuality 
-myData$sexuality_ordered[myData$sexuality==4 | myData$sexuality_ordered==5] <- 3 
-
-model <- 
-  as.factor(sexuality_ordered) ~ 
-  herf_relig_bin_dist +  maj_relig_bin_dist +
-  herf_ethn_dist + maj_ethn_dist + 
-  christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + as.numeric(water_access) + as.numeric(urban) + as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY) + sample_size_dist #remove sample size for main models
-
-mdata <- extractdata(model, myData, na.rm=TRUE) 
-
-mdata$age <- as.numeric(mdata$age)
-mdata$education <- as.numeric(mdata$education)
-mdata$water_access <- as.numeric(mdata$water_access)
-mdata$urban <- as.numeric(mdata$urban)
-mdata$religiosity <- as.numeric(mdata$religiosity)
-mdata$internet <- as.numeric(mdata$internet)
-mdata$tol_relig2 <- as.numeric(mdata$tol_relig2)
-mdata$tol_ethnic2 <- as.numeric(mdata$tol_ethnic2)
-mdata$tol_hiv2 <- as.numeric(mdata$tol_hiv2)
-mdata$tol_immig2 <- as.numeric(mdata$tol_immig2)
-
-zmod <- zelig(model <- 
-                as.factor(sexuality_ordered) ~ 
-                herf_relig_bin_dist +  maj_relig_bin_dist +
-                herf_ethn_dist + maj_ethn_dist + 
-                christian + muslim + 
-                female + age + education + water_access + urban + religiosity + internet + 
-                tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 +
-                as.factor(COUNTRY) + sample_size_dist #remove sample size for main models
-              , data = mdata, model="ologit")
-
-# Set Range for 'continuous' variable
-herf_range <- seq(min(mdata$herf_relig_bin_dist, na.rm=T), 1, length.out=100)
-x.out <- setx(zmod, herf_relig_bin_dist = herf_range)
-s.out <- Zelig::sim(zmod, x=x.out)
-
-plotdata <- mv_extract(s.out)
-plotdata1 <- plotdata[seq(1,nrow(plotdata), 3),] # only looking at people who strongly oppose LGBT neighbors
-plotdata2 <- plotdata[seq(2,nrow(plotdata), 3),] # only looking at people who oppose LGBT neighbors
-plotdata3 <- plotdata[seq(3,nrow(plotdata), 3),] # only looking at people who DON'T OPPOSE LGBT neighbors
-colnames(plotdata2) <- paste(colnames(plotdata2),col="_2", sep="")
-colnames(plotdata3) <- paste(colnames(plotdata3),col="_3", sep="")
-
-plot_data_full <- data.frame(plotdata1, plotdata2, plotdata3, herf_relig_bin_dist = herf_range)
-
-# Pr strongly oppose
-ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist))  + ylim(.85,.93) + xlim(0,1) +
-  geom_line(aes(y =mean)) + 
-  geom_line(aes(y =high), linetype="dashed", color="red") + 
-  geom_line(aes(y =low), linetype="dashed", color="red") + 
-  theme_minimal() +
-  labs(
-    title = paste("Effect of", xvar, sep=" "),
-    subtitle = paste("on attitudes toward sexual minorities (Model 5, Ordered)"),
-    x = paste(xlab_name, "(0 = homogeneous)", sep=" ")
-    , y = ""
-    #, y = "Pr( Strongly opposing sexual minorities as neighbors )"  
-  ) +
-  annotate("text", x = .65, y=.915, label = "Pr (Strongly Opposing LGBT Neighbors)\n95% CI", color="red") +
-  ggsave("model5_ordered_a.png", device="png")
-
-# PR Oppose (not strongly), Don't Oppose
-ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist))  + ylim(.035,.085) + xlim(0,1) +
-  geom_line(aes(y =mean_3)) + 
-  geom_line(aes(y =high_3), linetype="dashed", color="blue") + 
-  geom_line(aes(y =low_3), linetype="dashed", color="blue") + 
-  theme_minimal() +
-  labs(
-    title = paste("Effect of", xvar, sep=" "),
-    subtitle = paste("on attitudes toward sexual minorities (Model 5, Ordered)"),
-    x = paste(xlab_name, "(0 = homogeneous)", sep=" ")
-    , y = ""
-    #, y = "Pr( Not opposing sexual minorities as neighbors )"  
-  ) +
-  annotate("text", x = .54, y=.080, label = "Pr (Not Opposing LGBT Neighbors)\n95% CI", color="blue") +
-  ggsave("model5_ordered_b.png", device="png")
-
-# PR Oppose (not strongly), Don't Oppose
-ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist))  + ylim(.025,.09) + xlim(0,1) +
-  geom_line(aes(y =mean_2)) + 
-  geom_line(aes(y =high_2), linetype="dashed", color="orange") + 
-  geom_line(aes(y =low_2), linetype="dashed", color="orange") + 
-  theme_minimal() +
-  geom_line(aes(y =mean_3)) + 
-  geom_line(aes(y =high_3), linetype="dashed", color="blue") + 
-  geom_line(aes(y =low_3), linetype="dashed", color="blue") + 
-  theme_minimal() +
-  labs(
-    title = paste("Effect of", xvar, sep=" "),
-    subtitle = paste("on attitudes toward sexual minorities (Model 5, Ordered)"),
-    x = paste(xlab_name, "(0 = homogeneous)", sep=" ")
-    , y = ""
-    #, y = "Pr( given attitude on sexual minorities as neighbors )"  
-  ) +
-  annotate("text", x = .6, y=.09, label = "Pr (Not Opposing LGBT Neighbors)", color="blue") +
-  annotate("text", x = .45, y=.035, label = "Pr (Opposing LGBT Neighbors,\nbut not strongly)", color="orange") +
-  ggsave("model5_ordered_c.png", device="png")
-
-
-#### Spare / duplicate plot code ####
-
-# 
-# model <- 
-#   sexuality2 ~ 
-#   herf_relig_bin_dist +  maj_relig_bin_dist +
-#   christian + muslim +
-#   female + as.numeric(age) + as.numeric(education) + as.numeric(water_access) + as.numeric(urban) + as.numeric(religiosity) + as.numeric(internet) +
-#   as.numeric(tol_noLGBT) + 
-#   as.factor(COUNTRY) # + sample_size_dist #remove sample size for main models
-# 
-# mdata <- extractdata(model, #extract data to only include what is in the model
-#                      myData, 
-#                      extra = ~DISTRICT + RESPNO, #add DISTRICT so we can get district-clustered sd err, and RESPNO for reference
-#                      na.rm=TRUE) 
-# 
-# lm.result.3 <- lm(model, data = mdata) #save OLS result
-# lm.result.3 <- coeftest(lm.result.3, vcov. = function(x) cluster.vcov(x, ~DISTRICT)) #add DCSE to OLS
-# lm.result.3 #OLS result w/ DCSE
-# logit.result.3 <- glm(model, family=binomial, data=mdata) #save logit result 
-# logit.result.3 <- coeftest(logit.result.3, vcov. = function(x) cluster.vcov(x, ~ DISTRICT)) #add DCSE to logit result
-# logit.result.3 # Logit result w/ DCSE
-# # n: 47,034
-# 
-# mdata$age <- as.numeric(mdata$age)
-# mdata$education <- as.numeric(mdata$education)
-# mdata$water_access <- as.numeric(mdata$water_access)
-# mdata$urban <- as.numeric(mdata$urban)
-# mdata$religiosity <- as.numeric(mdata$religiosity)
-# mdata$internet <- as.numeric(mdata$internet)
-# mdata$tol_noLGBT <- as.numeric(mdata$tol_noLGBT)
-# 
-# zmod <- zelig(model <- 
-#                 as.factor(sexuality2) ~ 
-#                 herf_relig_bin_dist +  maj_relig_bin_dist +
-#                 christian + muslim + 
-#                 female + age + education + water_access + urban + religiosity + internet + tol_noLGBT + 
-#                 as.factor(COUNTRY) + sample_size_dist #remove sample size for main models
-#         , data = mdata, model="logit")
-# 
-# # Set Range for 'continuous' variable
-# herf_range <- seq(min(mdata$herf_relig_bin_dist, na.rm=T), max(mdata$herf_relig_bin_dist, na.rm=T), length.out=100)
-# x.out <- setx(zmod, herf_relig_bin_dist = herf_range)
-# s.out <- Zelig::sim(zmod, x=x.out)
-# s.out
-# 
-# plotdata <- mv_extract(s.out)
-# #plotdata1 <- plotdata[seq(1,nrow(plotdata), 4),] # only looking at people with low trust
-# #plotdata4 <- plotdata[seq(4,nrow(plotdata), 4),] # only looking at people with high trust
-# 
-# #colnames(plotdata4) <- paste(colnames(plotdata4),col="_4", sep="")
-# plot_data_full <- data.frame(plotdata, herf_relig_bin_dist = herf_range)
-# 
-# xvar <- "Inverse HHI (Religion)"
-# xlab_name <- "Inverse HHI (Religion)"
-# 
-# # PID Covariate #
-# ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist))  + ylim(.02,.085) + xlim(0,.9) +
-#   geom_line(aes(y =mean)) + 
-#   geom_line(aes(y =high), linetype="dashed", color="red") + 
-#   geom_line(aes(y =low), linetype="dashed", color="red") + 
-#   #geom_line(aes(y =qt.1), linetype="dashed", color="red") + 
-#   #geom_line(aes(y =qt.3), linetype="dashed", color="red") + 
-#   theme_minimal() +
-#   #geom_ribbon(aes(ymin=low, ymax=high), alpha=0.1) +
-#   #geom_ribbon(aes(ymin=qt.1, ymax=qt.3), alpha=0.6) +
-#   #geom_line(aes(y =mean_4)) + 
-#   #geom_line(aes(y =high_4), linetype="dashed", color="blue") + 
-#   #geom_line(aes(y =low_4), linetype="dashed", color="blue") + 
-#   #geom_line(aes(y =qt.1_4), linetype="dashed", color="blue") + 
-#   #geom_line(aes(y =qt.3_4), linetype="dashed", color="blue") + 
-#   theme_minimal() +
-#   #geom_ribbon(aes(ymin=low_4, ymax=high_4), alpha=0.1) +
-#   #geom_ribbon(aes(ymin=qt.1_4, ymax=qt.3_4), alpha=0.6) + 
-#   labs(
-#     title = paste("Effect of", xvar, sep=" "),
-#     subtitle = paste("on attitudes toward sexual minorities (Model 3"),
-#     x = paste(xlab_name, "(95% CI)", sep=" "),
-#     y = "E( Accepting sexual minorities as neighbors )"  ) +
-# annotate("text", x = .7, y=.08, label = "95% CI", color="red") 
-# #annotate("text", x = 12, y=.05, label = "DV: High Trust")
-# ggsave("plots/sims/model3.png", device="png")
-
-
+######################################################
+########       END OF MAIN MODEL SCRIPT       ########
+###########################################@@@@@@#####
