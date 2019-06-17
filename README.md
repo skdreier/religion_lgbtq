@@ -36,7 +36,8 @@ We use the merged Afrobaormeter Round 6 data, which is publicly available at: ht
     - Table A.12: Replication of main logit results with control for religious affiliation
     - Table A.22: Replication of main OLS results with religion HHI at region level rather than district
     - Table A.23: Replication of main logit results with religion HHI at region level rather than district
-*NOTE to STEPHEN*: Keep the chunk of code at end of this script here. I think it creates our main plots, but I can't clean it until we figure out our extractdata issue.
+    
+- [5_model_plots.R](source/5_model_plots.R) generates Figures 4, 5A, and 5B: simulates predicted probability of tolerating or opposing LGBTs based on respondent's district herfindahl score. Code requires functions from [multiplot_code_lc.R](source/multiplot_code_lc.R), which was developed by [Loren Collingwood](https://www.collingwoodresearch.com/)
 
 - [robust_ethnicity.R](source/robust_ethnicity.R) runs robustness checks:
     - Table A.13: Replace religious HHI with ethnicity HHI (OLS)
