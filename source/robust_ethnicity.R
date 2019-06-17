@@ -11,8 +11,9 @@
 #   - Table A.16
 
 # AFROBAORMETER DATA                          
-# R version 3.5.2 (2018-12-20)                
-# DATE: 5/17/2019                             
+# R version 3.6.0 (2019-04-26)                
+#                                             
+# DATE: 06/17/2019 
 ###############################################
 
 rm(list=ls())
@@ -24,13 +25,16 @@ library(magrittr) #pipe function
 library(dplyr) #transformations
 library(forcats) #factor recoding
 library(stringr) #str_detect
-library(simcf) #extractdata
 library(broom) #for clustered std err
 library(multiwayvcov) #for clustered std err
 library(lmtest) #coeftest for clustered std err
 library(stargazer)
 library(MASS) #polr to run probit models
 library(ggplot2)
+
+library(devtools) #simcf
+#install_github("chrisadolph/simcf") # github source is compatible w recent R versions
+library(simcf) #extractdata
 
 ############################
 ### LOAD CLEAN SUBSET OF ###    
@@ -51,95 +55,82 @@ model <-
   sexuality2 ~ 
   herf_relig_bin_dist +  maj_relig_bin_dist +
   christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + as.numeric(water_access) + as.numeric(urban) + as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY)
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry)
 
-mdata <- extractdata(model, #extract data to only include what is in the model
-                     myData, 
-                     extra = ~DISTRICT + RESPNO, #add DISTRICT so we can get district-clustered sd err, and RESPNO for reference
-                     na.rm=TRUE) 
+mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE) 
 
-lm.result <- lm(model, data = mdata) #save OLS result
-lm.result.RC1 <- coeftest(lm.result, vcov. = function(x) cluster.vcov(x, ~DISTRICT)) #add DCSE to OLS
-logit.result <- glm(model, family=binomial, data=mdata) #save logit result 
-logit.result.RC1 <- coeftest(logit.result, vcov. = function(x) cluster.vcov(x, ~ DISTRICT)) #add DCSE to logit result
+lm.result <- lm(model, data = mdata) 
+lm.result.RC1 <- coeftest(lm.result, vcov. = function(x) cluster.vcov(x, ~DISTRICT)) 
+logit.result <- glm(model, family=binomial, data=mdata) 
+logit.result.RC1 <- coeftest(logit.result, vcov. = function(x) cluster.vcov(x, ~ DISTRICT)) 
 
 # Religion as DV
 model <- 
   tol_relig2 ~ 
   herf_relig_bin_dist + maj_relig_bin_dist +
   christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + as.numeric(water_access) + as.numeric(urban) + as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_ethnic2) +  as.numeric(sexuality2) +  as.numeric(tol_hiv2) + as.numeric(tol_immig2) +  
-  as.factor(COUNTRY)
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_ethnic2 + as.numeric(sexuality2) + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry)
 
-mdata <- extractdata(model, #extract data to only include what is in the model
-                     myData, 
-                     extra = ~DISTRICT + RESPNO, #add DISTRICT so we can get district-clustered sd err, and RESPNO for reference
-                     na.rm=TRUE) 
+mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE) 
 
-lm.result <- lm(model, data = mdata) #save OLS result
-lm.result.RC1a <- coeftest(lm.result, vcov. = function(x) cluster.vcov(x, ~DISTRICT)) #add DCSE to OLS
-logit.result <- glm(model, family=binomial, data=mdata) #save logit result 
-logit.result.RC1a <- coeftest(logit.result, vcov. = function(x) cluster.vcov(x, ~ DISTRICT)) #add DCSE to logit result
+lm.result <- lm(model, data = mdata) 
+lm.result.RC1a <- coeftest(lm.result, vcov. = function(x) cluster.vcov(x, ~DISTRICT)) 
+logit.result <- glm(model, family=binomial, data=mdata) 
+logit.result.RC1a <- coeftest(logit.result, vcov. = function(x) cluster.vcov(x, ~ DISTRICT)) 
 
 # Ethniciy as DV
 model <- 
   tol_ethnic2 ~ 
   herf_relig_bin_dist + maj_relig_bin_dist +
   christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + as.numeric(water_access) + as.numeric(urban) + as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) +  as.numeric(sexuality2) +  as.numeric(tol_hiv2) + as.numeric(tol_immig2) +  
-  as.factor(COUNTRY)
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + as.numeric(sexuality2) + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry)
 
-mdata <- extractdata(model, #extract data to only include what is in the model
-                     myData, 
-                     extra = ~DISTRICT + RESPNO, #add DISTRICT so we can get district-clustered sd err, and RESPNO for reference
-                     na.rm=TRUE) 
+mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE) 
 
-lm.result <- lm(model, data = mdata) #save OLS result
-lm.result.RC1b <- coeftest(lm.result, vcov. = function(x) cluster.vcov(x, ~DISTRICT)) #add DCSE to OLS
-logit.result <- glm(model, family=binomial, data=mdata) #save logit result 
-logit.result.RC1b <- coeftest(logit.result, vcov. = function(x) cluster.vcov(x, ~ DISTRICT)) #add DCSE to logit result
+lm.result <- lm(model, data = mdata) 
+lm.result.RC1b <- coeftest(lm.result, vcov. = function(x) cluster.vcov(x, ~DISTRICT)) 
+logit.result <- glm(model, family=binomial, data=mdata) 
+logit.result.RC1b <- coeftest(logit.result, vcov. = function(x) cluster.vcov(x, ~ DISTRICT)) 
 
 # HIV/AIDS as DV
 model <- 
   tol_hiv2 ~ 
   herf_relig_bin_dist + maj_relig_bin_dist +
   christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + as.numeric(water_access) + as.numeric(urban) + as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) +  as.numeric(sexuality2) + as.numeric(tol_immig2) +  
-  as.factor(COUNTRY)
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + as.numeric(sexuality2) + tol_immig2 + 
+  as.factor(ctry)
 
-mdata <- extractdata(model, #extract data to only include what is in the model
-                     myData, 
-                     extra = ~DISTRICT + RESPNO, #add DISTRICT so we can get district-clustered sd err, and RESPNO for reference
-                     na.rm=TRUE) 
 
-lm.result <- lm(model, data = mdata) #save OLS result
-lm.result.RC1c <- coeftest(lm.result, vcov. = function(x) cluster.vcov(x, ~DISTRICT)) #add DCSE to OLS
-logit.result <- glm(model, family=binomial, data=mdata) #save logit result 
-logit.result.RC1c <- coeftest(logit.result, vcov. = function(x) cluster.vcov(x, ~ DISTRICT)) #add DCSE to logit result
+mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE) 
+
+lm.result <- lm(model, data = mdata) 
+lm.result.RC1c <- coeftest(lm.result, vcov. = function(x) cluster.vcov(x, ~DISTRICT)) 
+logit.result <- glm(model, family=binomial, data=mdata) 
+logit.result.RC1c <- coeftest(logit.result, vcov. = function(x) cluster.vcov(x, ~ DISTRICT)) 
 
 # Immigration as DV
 model <- 
   tol_immig2 ~ 
   herf_relig_bin_dist + maj_relig_bin_dist +
   christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + as.numeric(water_access) + as.numeric(urban) + as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) +  as.numeric(sexuality2) +  as.numeric(tol_hiv2) +  
-  as.factor(COUNTRY)
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + as.numeric(sexuality2) + tol_hiv2 + 
+  as.factor(ctry)
 
-mdata <- extractdata(model, #extract data to only include what is in the model
-                     myData, 
-                     extra = ~DISTRICT + RESPNO, #add DISTRICT so we can get district-clustered sd err, and RESPNO for reference
-                     na.rm=TRUE) 
 
-lm.result <- lm(model, data = mdata) #save OLS result
-lm.result.RC1d <- coeftest(lm.result, vcov. = function(x) cluster.vcov(x, ~DISTRICT)) #add DCSE to OLS
-logit.result <- glm(model, family=binomial, data=mdata) #save logit result 
-logit.result.RC1d <- coeftest(logit.result, vcov. = function(x) cluster.vcov(x, ~ DISTRICT)) #add DCSE to logit result
+mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE) 
+
+lm.result <- lm(model, data = mdata) 
+lm.result.RC1d <- coeftest(lm.result, vcov. = function(x) cluster.vcov(x, ~DISTRICT)) 
+logit.result <- glm(model, family=binomial, data=mdata)
+logit.result.RC1d <- coeftest(logit.result, vcov. = function(x) cluster.vcov(x, ~ DISTRICT)) 
 
 # create meaningful labels for latex table
 tol.vars <- c("Religion HHI (district)", "Majority religion", 
@@ -185,39 +176,32 @@ model <-
   sexuality2 ~ 
   herf_relig_bin_dist + maj_relig_bin_dist +
   christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + as.numeric(water_access) + as.numeric(urban) + as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY)
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry)
 
-mdata <- extractdata(model, #extract data to only include what is in the model
-                     myData, 
-                     extra = ~DISTRICT + RESPNO, #add DISTRICT so we can get district-clustered sd err, and RESPNO for reference
-                     na.rm=TRUE) 
+mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE) 
 
-lm.result <- lm(model, data = mdata) #save OLS result
-lm.result.RC2 <- coeftest(lm.result, vcov. = function(x) cluster.vcov(x, ~DISTRICT)) #add DCSE to OLS
-logit.result <- glm(model, family=binomial, data=mdata) #save logit result 
-logit.result.RC2 <- coeftest(logit.result, vcov. = function(x) cluster.vcov(x, ~ DISTRICT)) #add DCSE to logit result
+lm.result <- lm(model, data = mdata) 
+lm.result.RC2 <- coeftest(lm.result, vcov. = function(x) cluster.vcov(x, ~DISTRICT)) 
+logit.result <- glm(model, family=binomial, data=mdata) 
+logit.result.RC2 <- coeftest(logit.result, vcov. = function(x) cluster.vcov(x, ~ DISTRICT)) 
 
 # Ethnic HHI as explanatory variable
 model <- 
   sexuality2 ~ 
   herf_ethn_dist + maj_ethn_dist + 
   christian + muslim +
-  female + as.numeric(age) + as.numeric(education) + as.numeric(water_access) + as.numeric(urban) + as.numeric(religiosity) +
-  as.numeric(internet) + 
-  as.numeric(tol_relig2) + as.numeric(tol_ethnic2) + as.numeric(tol_hiv2) + as.numeric(tol_immig2) +
-  as.factor(COUNTRY)
+  female + age + education + water_access + urban + religiosity + 
+  internet + tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 + 
+  as.factor(ctry)
 
-mdata <- extractdata(model, #extract data to only include what is in the model
-                     myData, 
-                     extra = ~DISTRICT + RESPNO, #add DISTRICT so we can get district-clustered sd err, and RESPNO for reference
-                     na.rm=TRUE) 
+mdata <- extractdata(model, myData, extra = ~DISTRICT + RESPNO, na.rm=TRUE) 
 
-lm.result <- lm(model, data = mdata) #save OLS result
-lm.result.RC2b <- coeftest(lm.result, vcov. = function(x) cluster.vcov(x, ~DISTRICT)) #add DCSE to OLS
-logit.result <- glm(model, family=binomial, data=mdata) #save logit result 
-logit.result.RC2b <- coeftest(logit.result, vcov. = function(x) cluster.vcov(x, ~ DISTRICT)) #add DCSE to logit result
+lm.result <- lm(model, data = mdata) 
+lm.result.RC2b <- coeftest(lm.result, vcov. = function(x) cluster.vcov(x, ~DISTRICT)) 
+logit.result <- glm(model, family=binomial, data=mdata) 
+logit.result.RC2b <- coeftest(logit.result, vcov. = function(x) cluster.vcov(x, ~ DISTRICT)) 
 
 # create meaningful labels for table 
 div.vars <- c("Religion HHI (district)", "Majority religion", 
@@ -252,6 +236,9 @@ stargazer(logit.result.RC2, logit.result.RC2b,
 )
 
 
+##################################################################
+########       END OF ROBUSTNESS (ETHNICITY) SCRIPT       ########
+##################################################################
 
 
 ##########################################################################################################

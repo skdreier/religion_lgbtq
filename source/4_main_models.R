@@ -19,7 +19,6 @@
 #                                             #
 # AFROBAORMETER DATA                          #  
 # R version 3.6.0 (2019-04-26)                #
-# NOTE: Not compatible with newer R versions  #
 #                                             #
 # DATE: 06/17/2019                            # 
 ###############################################
@@ -36,8 +35,8 @@ library(multiwayvcov) #for clustered std err
 library(lmtest) #coeftest for clustered std err
 library(stargazer) #for latex output
 library(MASS) #polr to run probit models
-library(devtools) #simcf
 
+library(devtools) #simcf
 install_github("chrisadolph/simcf") # github source is compatible w recent R versions
 library(simcf) #extractdata
 
@@ -576,4 +575,4 @@ stargazer(logit.result.1, logit.result.2, logit.result.3, logit.result.5,
 
 ######################################################
 ########       END OF MAIN MODEL SCRIPT       ########
-###########################################@@@@@@#####
+######################################################
