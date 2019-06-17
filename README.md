@@ -37,7 +37,9 @@ We use the merged Afrobaormeter Round 6 data, which is publicly available at: ht
     - Table A.22: Replication of main OLS results with religion HHI at region level rather than district
     - Table A.23: Replication of main logit results with religion HHI at region level rather than district
     
-- [5_model_plots.R](source/5_model_plots.R) generates Figures 4, 5A, and 5B: simulates predicted probability of tolerating or opposing LGBTs based on respondent's district herfindahl score. Code requires functions from [multiplot_code_lc.R](source/multiplot_code_lc.R), which was developed by [Loren Collingwood](https://www.collingwoodresearch.com/)
+- [5_model_plots.R](source/5_model_plots.R) generates figures representing simulated probability of tolerating or opposing LGBTs based on respondent's district herfindahl score. Code requires functions from [multiplot_code_lc.R](source/multiplot_code_lc.R), which was developed by [Loren Collingwood](https://www.collingwoodresearch.com/). Figures include:
+    - Figure 4: Main model (3) results, probability of tolerating LGBTs
+    - Figure 5a & 5b: Main model (3, ordered) results, probability of strongly opposing or tolerating LGBTs
 
 - [robust_ethnicity.R](source/robust_ethnicity.R) runs robustness checks:
     - Table A.13: Replace religious HHI with ethnicity HHI (OLS)
