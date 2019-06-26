@@ -1,14 +1,16 @@
-###############################################
-# Replication Code for:                       #
-# Long, Dreier, Winkler (P&R)                 #
-#                                             #
-# CODE TO CLEAN & TRANSFORM AFROBAROMETER     #
-# AFROBAORMETER DATA                          #
-#                                             #
-#                                             #
-#  R version 3.6.0 (2019-04-26)               #
-# DATE: 06/17/2019                            #
-###############################################
+#################################################
+# Replication Code for:                         #
+# Dreier, Long, Winkler                         #
+#                                               #
+# CODE TO CLEAN & TRANSFORM AFROBAROMETER       #
+# AFROBAORMETER DATA                            #
+#                                               #
+# OUTPUTS:                                      #
+#   - Subsetted data with transformed variables #  
+#                                               #
+#  R version 3.6.0 (2019-04-26)                 #
+# DATE: 06/26/2019                              #
+#################################################
 
 # Content:
 # - Load Afrobarometer dataset with added Herfindahl scores

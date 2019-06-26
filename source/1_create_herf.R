@@ -1,6 +1,6 @@
 ###############################################
 # Replication Code for:                       #
-# Long, Dreier, Winkler (P&R)                 #
+# Dreier, Long, Winkler                       #
 #                                             #
 # CODE TO CREATE HERFINDAHL SCORES            #
 # AFROBAORMETER DATA                          #
