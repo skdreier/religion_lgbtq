@@ -1,6 +1,6 @@
 ###############################################
 # Replication Code for:                       #    
-# Dreier, Long, Winkler (P&R)                 #              
+# Dreier, Long, Winkler                       #              
 #                                             #
 # Code to plot simulations for main models    #
 #                                             #
@@ -21,6 +21,7 @@ rm(list=ls())
 
 source("source/multiplot_code_lc.R")
 library(ZeligChoice)
+library(Zelig)
 library(ggplot2)
 library(dplyr)
 
@@ -294,13 +295,13 @@ stargazer(logit.3.base, logit.3.evan, logit.3.main, logit.3.catholic,
 
 
 ########################################################################
-### FIGURES A.23 #######################################################
+### FIGURES A.24 #######################################################
 ### MODEL 3: Probability of tolerating LGBTs ###########################
 ### among districts that have specific religious identities present ####
 ### AFROBAROMETER DATA #################################################
 ########################################################################
 
-### Figure A.23a: Protestant Evangelicals present in district ###
+### Figure A.24a: Protestant Evangelicals present in district ###
 
 # Estimate model
 zmod <- zelig(model <-
@@ -321,7 +322,7 @@ suppressWarnings( s.out <- Zelig::sim(zmod, x=x.out) )
 plotdata <- mv_extract(s.out)
 plot_data_full <- data.frame(plotdata, herf_relig_bin_dist = herf_range)
 
-# Plot Figure A.23a
+# Plot Figure A.24a
 ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist)) +
   geom_line(aes(y =mean)) +
   geom_line(aes(y =high), linetype="dashed", color = "blue") +
@@ -340,10 +341,10 @@ ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist)) +
         axis.text.y = element_text(size=14),
         axis.title.y = element_text(size=14)) +
 
-  ggsave("figures/relig_subsets/23a_model3_evangelical.png", device="png")
+  ggsave("figures/relig_subsets/24a_model3_evangelical.png", device="png")
 
 
-### Figure A.23b: Protestant Mainlines present in district ###
+### Figure A.24b: Protestant Mainlines present in district ###
 
 # Estimate model
 zmod <- zelig(model <-
@@ -363,7 +364,7 @@ suppressWarnings( s.out <- Zelig::sim(zmod, x=x.out) )
 plotdata <- mv_extract(s.out)
 plot_data_full <- data.frame(plotdata, herf_relig_bin_dist = herf_range)
 
-### Plot Figure A.23b
+### Plot Figure A.24b
 ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist)) +
   geom_line(aes(y =mean)) +
   geom_line(aes(y =high), linetype="dashed", color = "blue") +
@@ -383,10 +384,10 @@ ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist)) +
         axis.text.y = element_text(size=14),
         axis.title.y = element_text(size=14)) +
 
-  ggsave("figures/relig_subsets/23b_model3_mainline.png", device="png")
+  ggsave("figures/relig_subsets/24b_model3_mainline.png", device="png")
 
   
-### Figure A.23c: Catholics present in district ###
+### Figure A.24c: Catholics present in district ###
   
 # Estimate model
 zmod <- zelig(model <-
@@ -406,7 +407,7 @@ suppressWarnings( s.out <- Zelig::sim(zmod, x=x.out) )
 plotdata <- mv_extract(s.out)
 plot_data_full <- data.frame(plotdata, herf_relig_bin_dist = herf_range)
 
-# Plot Figure A.23c
+# Plot Figure A.24c
 ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist)) +
   geom_line(aes(y =mean)) +
   geom_line(aes(y =high), linetype="dashed", color = "blue") +
@@ -425,10 +426,10 @@ ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist)) +
         axis.text.y = element_text(size=14),
         axis.title.y = element_text(size=14)) +
   
-  ggsave("figures/relig_subsets/23c_model3_catholic.png", device="png")
+  ggsave("figures/relig_subsets/24c_model3_catholic.png", device="png")
 
 
-### Figure A.23d: Muslims present in district ###
+### Figure A.24d: Muslims present in district ###
 
 # Estimate model
 zmod <- zelig(model <-
@@ -448,7 +449,7 @@ suppressWarnings( s.out <- Zelig::sim(zmod, x=x.out) )
 plotdata <- mv_extract(s.out)
 plot_data_full <- data.frame(plotdata, herf_relig_bin_dist = herf_range)
 
-# Plot Figure A.23d
+# Plot Figure A.24d
 ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist)) + 
   geom_line(aes(y =mean)) +
   geom_line(aes(y =high), linetype="dashed", color = "blue") +
@@ -467,7 +468,7 @@ ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist)) +
         axis.text.y = element_text(size=14),
         axis.title.y = element_text(size=14)) +
   
-  ggsave("figures/relig_subsets/23d_model3_muslim.png", device="png")
+  ggsave("figures/relig_subsets/24d_model3_muslim.png", device="png")
 
 
 ######################################################################
