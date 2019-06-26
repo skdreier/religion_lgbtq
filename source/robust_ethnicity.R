@@ -1,19 +1,19 @@
 ###############################################
-# Replication Code for:                       
-# Long, Dreier, Winkler (P&R)                 
-#          
-# Code for various robustness checks.
-#
-# OUTPUTS:
-#   - Table A.13
-#   - Table A.14
-#   - Table A.15
-#   - Table A.16
-
-# AFROBAORMETER DATA                          
-# R version 3.6.0 (2019-04-26)                
-#                                             
-# DATE: 06/17/2019 
+# Replication Code for:                       #
+# Long, Dreier, Winkler (P&R)                 #
+#                                             #
+# Code for various robustness checks          #
+#                                             #
+# OUTPUTS:                                    #
+#   - Table A.13                              #
+#   - Table A.14                              #
+#   - Table A.15                              #
+#   - Table A.16                              #
+#                                             #
+# AFROBAORMETER DATA                          #
+# R version 3.6.0 (2019-04-26)                #
+#                                             #
+# DATE: 06/17/2019                            #
 ###############################################
 
 rm(list=ls())
@@ -235,128 +235,6 @@ stargazer(logit.result.RC2, logit.result.RC2b,
           notes = c("All models include country fixed effects. Standard errors are clustered at the district level.")
 )
 
-
 ##################################################################
 ########       END OF ROBUSTNESS (ETHNICITY) SCRIPT       ########
 ##################################################################
-
-
-##########################################################################################################
-##########################################################################################################
-###################################### END? ##############################################################
-##########################################################################################################
-
-# Sarah: Do you know if you used the code below to create tables A.24 and A.25? It doesn't look like it to me.
-# and I think those tables were probably created within a script that creates the corresponding Figure A.23. 
-# I'm keeping this code here for now but we can delete it once we confirm it's not used to create tables A.23 & A.25
-
-################
-# Robustness 3:
-# Herf of Christ/Muslim
-# To show it's not just about Muslim v. Christian 
-################
-
-##################################################################################################
-# Subset to only exclusively Muslim or exclusively Christian or exclusively "Other"
-##################################################################################################
-
-### CODE BREAKS HERE! 
-
-summary(myData$herf_relig_christ_mus)
-table(myData$christ_mus)
-
-sub <- subset(myData, myData$herf_relig_christ_mus==1) # people in exclusively Christ, Mus or Other districts
-sub.christian <- subset(sub, sub$relig_bin > 0 & sub$relig_bin < 6) # people living in 100 % Christian districts
-sub.muslim <- subset(sub, sub$relig_bin==6) # people living in 100 % Muslim districts
-
-## RUN MODELS
-#  Herf + Majority
-
-#  Christian Only 
-model <- 
-  sexuality2 ~ 
-  herf_relig_dist + maj_relig_dist +
-  female + as.numeric(age) + as.numeric(education) + as.numeric(water_access) + as.numeric(urban) + as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_noLGBT) + 
-  as.factor(COUNTRY)
-
-mdata <- extractdata(model, #extract data to only include what is in the model
-                     sub.christian, 
-                     extra = ~DISTRICT + RESPNO, #add DISTRICT so we can get district-clustered sd err, and RESPNO for reference
-                     na.rm=TRUE) 
-lm.result.sub <- lm(model, data = mdata) #save OLS result
-lm.result.sub <- coeftest(lm.result.sub, vcov. = function(x) cluster.vcov(x, ~DISTRICT)) #add DCSE to OLS
-christ.all.lm <- lm.result.sub 
-logit.result.sub <- glm(model, family=binomial, data=mdata) #save logit result 
-logit.result.sub <- coeftest(logit.result.sub, vcov. = function(x) cluster.vcov(x, ~ DISTRICT)) #add DCSE to logit result
-christ.all.logit <- logit.result.sub
-
-# Muslim Only
-mdata <- extractdata(model, #extract data to only include what is in the model
-                     sub.muslim,
-                     extra = ~DISTRICT + RESPNO, #add DISTRICT so we can get district-clustered sd err, and RESPNO for reference
-                     na.rm=TRUE) 
-lm.result.sub <- lm(model, data = mdata) #save OLS result
-lm.result.sub <- coeftest(lm.result.sub, vcov. = function(x) cluster.vcov(x, ~DISTRICT)) #add DCSE to OLS
-muslim.all.lm <- lm.result.sub
-logit.result.sub <- glm(model, family=binomial, data=mdata) #save logit result 
-logit.result.sub <- coeftest(logit.result.sub, vcov. = function(x) cluster.vcov(x, ~ DISTRICT)) #add DCSE to logit result
-muslim.all.logit <- logit.result.sub
-
-stargazer(
-  christ.all.lm, christ.all.logit, muslim.all.lm,  muslim.all.logit, 
-  no.space=TRUE, 
-  keep.stat = c("n", "aic"), #see note below
-  dep.var.caption = "DV: Homosexual as Neighbor (0: dislike, 1: like or don't care)",
-  dep.var.labels.include = FALSE,
-  column.labels=c("All Christian (OLS)", "All Christian (Logit)", "All Muslim (OLS)", "All Muslim (Logit)"),
-  title = "Effect of Relig Diversity in all-Christian or all-Muslim Districts on LGBT Tolerance",
-  omit= "COUNTRY",
-  notes = c("All models include country fixed effects. Standard errors are clustered at the district level.")
-)
-
-#  Herf * Majority (INTERACTION MODEL)
-#  Christian Only 
-model <- 
-  sexuality2 ~ 
-  herf_relig_dist * maj_relig_dist +
-  female + as.numeric(age) + as.numeric(education) + as.numeric(water_access) + as.numeric(urban) + as.numeric(religiosity) + as.numeric(internet) +
-  as.numeric(tol_noLGBT) + 
-  as.factor(COUNTRY)
-
-mdata <- extractdata(model, #extract data to only include what is in the model
-                     sub.christian, 
-                     extra = ~DISTRICT + RESPNO, #add DISTRICT so we can get district-clustered sd err, and RESPNO for reference
-                     na.rm=TRUE) 
-lm.result.sub <- lm(model, data = mdata) #save OLS result
-lm.result.sub <- coeftest(lm.result.sub, vcov. = function(x) cluster.vcov(x, ~DISTRICT)) #add DCSE to OLS
-christ.all.lm <- lm.result.sub 
-logit.result.sub <- glm(model, family=binomial, data=mdata) #save logit result 
-logit.result.sub <- coeftest(logit.result.sub, vcov. = function(x) cluster.vcov(x, ~ DISTRICT)) #add DCSE to logit result
-christ.all.logit <- logit.result.sub
-
-# Muslim Only
-mdata <- extractdata(model, #extract data to only include what is in the model
-                     sub.muslim,
-                     extra = ~DISTRICT + RESPNO, #add DISTRICT so we can get district-clustered sd err, and RESPNO for reference
-                     na.rm=TRUE) 
-lm.result.sub <- lm(model, data = mdata) #save OLS result
-lm.result.sub <- coeftest(lm.result.sub, vcov. = function(x) cluster.vcov(x, ~DISTRICT)) #add DCSE to OLS
-muslim.all.lm <- lm.result.sub
-logit.result.sub <- glm(model, family=binomial, data=mdata) #save logit result 
-logit.result.sub <- coeftest(logit.result.sub, vcov. = function(x) cluster.vcov(x, ~ DISTRICT)) #add DCSE to logit result
-muslim.all.logit <- logit.result.sub
-
-stargazer(
-  christ.all.lm, christ.all.logit, muslim.all.lm,  muslim.all.logit, 
-  no.space=TRUE, 
-  keep.stat = c("n", "aic"), #see note below
-  dep.var.caption = "DV: Homosexual as Neighbor (0: dislike, 1: like or don't care)",
-  dep.var.labels.include = FALSE,
-  column.labels=c("All Christian (OLS)", "All Christian (Logit)", "All Muslim (OLS)", "All Muslim (Logit)"),
-  title = "Effect of Relig Diversity in all-Christian or all-Muslim Districts on LGBT Tolerance (Interaction)",
-  omit= "COUNTRY",
-  notes = c("All models include country fixed effects. Standard errors are clustered at the district level.")
-)
-
-
