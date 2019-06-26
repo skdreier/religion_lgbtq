@@ -1,6 +1,6 @@
 ###############################################
 # Replication Code for:                       #    
-# Long, Dreier, Winkler (P&R)                 #              
+# Dreier, Long, Winkler                       #              
 #                                             #
 # Code to run main models and various         #
 # replications of the main models.            #
@@ -20,7 +20,7 @@
 # AFROBAORMETER DATA                          #  
 # R version 3.6.0 (2019-04-26)                #
 #                                             #
-# DATE: 06/17/2019                            # 
+# DATE: 06/26/2019                            # 
 ###############################################
 
 rm(list=ls())
@@ -437,7 +437,7 @@ logit.result.5 <- glm(model, family=binomial, data=mdata)
 logit.result.5 <- coeftest(logit.result.5, vcov. = function(x) cluster.vcov(x, ~ DISTRICT)) 
 
 # create meaningful labels for the table
-full_relig.vars <- c("Religion HHI (unbinned)", "Majority religion (unbinned)", 
+full_relig.vars1 <- c("Religion HHI (district)", "Majority religion", 
                      "Ethnicity HHI (district)", "Majority ethnicity",
                      "Female", "Age", "Education",
                      "Water access", "Urban", "Religiosity", "Access to internet", 
@@ -448,20 +448,29 @@ full_relig.vars <- c("Religion HHI (unbinned)", "Majority religion (unbinned)",
 stargazer(lm.result.1, lm.result.2, lm.result.3, lm.result.5,
           no.space=TRUE, 
           label = "main_ols_full_relig",
-          covariate.labels = full_relig.vars,
+          covariate.labels = full_relig.vars1,
           keep.stat = c("n", "aic"),
           dep.var.caption = "DV: Homosexual as Neighbor (0: dislike, 1: don't care or like)",
           dep.var.labels.include = FALSE,
           title = "Effect of District-Level Religious Diversity on LGBT Attitudes (OLS)",
-          omit = "ctry",
+          omit = "ctry", 
           notes = c("All models include country fixed effects. 
                     Standard errors are clustered at the district level.")
           )
+
+# create meaningful labels for the table
+full_relig.vars2 <- c("Religion HHI (unbinned)", "Majority religion (unbinned)", 
+                     "Ethnicity HHI (district)", "Majority ethnicity",
+                     "Female", "Age", "Education",
+                     "Water access", "Urban", "Religiosity", "Access to internet", 
+                     "Religious tolerance", "Ethnic tolerance", "HIV+ tolerance",
+                     "Immigrant tolerance")
 
 # Generate latex table of Logit results (Table A.12)
 stargazer(logit.result.1, logit.result.2, logit.result.3, logit.result.5,
           no.space=TRUE, 
           label = "main_logit_full_relig",
+          covariate.labels = full_relig.vars2,
           keep.stat = c("n", "aic"), 
           dep.var.caption = "DV: Homosexual as Neighbor (0: dislike, 1: don't care or like)",
           dep.var.labels.include = FALSE,
