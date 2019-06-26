@@ -7,15 +7,14 @@
 # OUTPUTS:                                    #
 #   - Figure 4                                #
 #   - Figure 5A and 5B                        #
-#   - Figures A.23 (Religious subset plots)   #
 #   - Table A.24 (Religious subset tables)    #
-#   - Table A.25 (Religious subset tables)    #
+#   - Figures A.23 (Religious subset plots)   #
 #   - Figures A.25 (Country plots)            #
 #                                             #
 # AFROBAORMETER DATA                          #  
 # R version 3.6.0 (2019-04-26)                #
 #                                             #
-# DATE: 06/25/2019                            # 
+# DATE: 06/26/2019                            # 
 ###############################################
 
 rm(list=ls())
@@ -295,7 +294,7 @@ stargazer(logit.3.base, logit.3.evan, logit.3.main, logit.3.catholic,
 
 
 ########################################################################
-### FIGURES A.24 #######################################################
+### FIGURES A.23 #######################################################
 ### MODEL 3: Probability of tolerating LGBTs ###########################
 ### among districts that have specific religious identities present ####
 ### AFROBAROMETER DATA #################################################
