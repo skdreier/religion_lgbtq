@@ -10,7 +10,7 @@ Replication material for "African, Religious, and Tolerant? How Religious Divers
 Sarah Dreier, James Long, and Stephen Winkler. 
 
 ## Afrobarometer Data
-We use the merged Afrobaormeter Round 6 data, which is publicly available at: http://afrobarometer.org/data/merged-data. Follow the source R scripts (below) to download directly from the Afrob website. Alternatively, download this dataset and save it in a folder within your directory. Make sure the downloaded dataset is named: `merged_r6_data_2016_36countries2.sav`.  
+We use the merged Afrobarometer Round 6 data, which is publicly available at: http://afrobarometer.org/data/merged-data. Follow the source R scripts (below) to download directly from the Afrobarometer website. 
 
 ## Build Scripts
 - [1_create_herf.R](source/1_create_herf.R) reads in the Afrobarometer data from its web source [Afrobarometer.org](http://afrobarometer.org/data/merged-data), calculates Herfindahl scores for key "diversity" variables, saves the new dataset ("data") as: `data/afrob_with_herf.RData`, and produces statistics for Tables A.4 and A.5.
