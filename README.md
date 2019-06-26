@@ -7,7 +7,7 @@ Revisions: June 26
 Replication material for "African, Religious, and Tolerant? How Religious Diversity Shapes Attitudes Towards Sexual Minorities in Africa" (article under review)
 
 ## Authors
-Sarah Dreier, James Long, and Stephen Winkler. 
+Sarah Dreier, James Long, and Stephen Winkler (authorship listed alphabetically) 
 
 ## Afrobarometer Data
 We use the merged Afrobarometer Round 6 data, which is publicly available at: http://afrobarometer.org/data/merged-data. Follow the source R scripts (below) to download directly from the Afrobarometer website. 
