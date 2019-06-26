@@ -40,14 +40,15 @@ We use the merged Afrobaormeter Round 6 data, which is publicly available at: ht
 - [5_model_plots.R](source/5_model_plots.R) generates figures representing simulated probability of tolerating or opposing LGBTs based on respondent's district herfindahl score. Code requires functions from [multiplot_code_lc.R](source/multiplot_code_lc.R), which was developed by [Loren Collingwood](https://www.collingwoodresearch.com/). Figures include:
     - Figure 4: Main model (3) results, probability of tolerating LGBTs
     - Figure 5a & 5b: Main model (3, ordered) results, probability of strongly opposing or tolerating LGBTs
+    - Table A.24: Main model (3) results, subsetted to districts with specific religious identities present
+    - Figure A.23a - A.23d: Main model (3) results, subsetted to districts with specific religious identities present
+    - Figure A.25: Main model (3) results among each distinct country surveyed by Afrobarometer. 
 
 - [robust_ethnicity.R](source/robust_ethnicity.R) runs robustness checks:
     - Table A.13: Replace religious HHI with ethnicity HHI (OLS)
     - Table A.14: Replace religious HHI with ethnicity HHI (logit)
     - Table A.15: Effect of religious HHI on other social out-groups (OLS)
     - Table A.16: Effect of religious HHI on other social out-groups (logit)
-*NOTE to SARAH*: there is a chunk of code at end of this script (line 265) that I think can be deleted, but wanted to
-check with you first to make sure it's not used to create tables A.24 and A.25. See my note in script for more. 
 
 - [robust_district_tolerance_control.R](source/robust_district_tolerance_control.R) creates district-level average of non-lgbt tolerance, runs main models with this control:
     - Table A.17: Replication of main OLS model with control for district-level social tolerance
@@ -59,21 +60,3 @@ check with you first to make sure it's not used to create tables A.24 and A.25. 
     
 - [robust_region_fe.R](source/robust_region_fe.R) replicates main models with region and country fixed effects, creates:
     - Table A.19: Replication of main OLS model with region fixed effect
-
-## NOTES REGARDING OLDER DOCUMENTS
-
-### SCRIPTS WE MIGHT BE ABLE TO DELTE?
-These are scripts that I think we might be able to delete from main repo. We shouldn't delete yet until we can confirm that everything replicates, but can you look at the ones with your name by it to see if you think we use it for anything? 
-
-- Muslim Detail folder?: SARAH, do you remember what this folder was for? I can't recall.
-- create_dhs_herf.R: SARAH, do you know if we use this? I think not.
-- multiplot_code_lc.R: SARAH, do you know if we use this? Looks like it might be a dependency script for some function?
-- post-apsr-robustness.R: SARAH, do you know if we use this? 
-- post_CPS_Model_tests.R: STEPHEN will see if we use any tables from this in the paper. 
-- robustness_relig_div*relig_tol.R STEPHEN will seee if we use any tables from this in paper. 
-
-# old data
-WE CAN DELETE THIS WHEN WE'RE SURE WE DON'T NEED IT
-`afro_herf.csv` is the Afrobarometer dataset with new variables for Herf index
-`afro_herf_subset.csv` is a subset of Afrobarometer data used in our models, plus Herf index
-`afro_herf_subset2.csv` adds Herf index for binned religion variables 
