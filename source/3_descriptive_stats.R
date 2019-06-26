@@ -1,6 +1,6 @@
 ###################################################
 # Replication Code for:                           #
-# Long, Dreier, Winkler (P&R)                     #
+# Dreier, Long, Winkler                           #
 #                                                 #
 # CODE TO GENERATE DESCRIPTIVE TABLES AND FIGURES #
 # AFROBAROMETER DATA                              #
@@ -13,9 +13,8 @@
 #   - Table A.2                                   #
 #   - Table A.3                                   #
 #                                                 #
-#                                                 #
 # R version 3.6.0 (2019-04-26)                    #
-# DATE: 06/12/2019                                #
+# DATE: 06/26/2019                                #
 ###################################################
 
 rm(list=ls())
@@ -79,7 +78,7 @@ sorted <- plot_data[ rev(order(plot_data$mean)) ,]
 row.names(sorted) = c(1:34)
 
 # PLOT FIGURE 1: Percent who would dislike having an LGBTQ neighbor (by country)
-pdf(file="figures/1_dv_ctryTEST.pdf",width=5,height=5)
+pdf(file="figures/1_dv_ctry.pdf",width=5,height=5)
 par(mai=c(.7,1,0.35,1.2))
 plot(sorted$mean, nrow(sorted):1, type="p", xlim =c(0,1),
      pch=16, cex=.7, yaxt="n", xaxt="n", ylab="", xlab="", bty="n", cex.main=.9, cex.axis=.9)
@@ -215,8 +214,6 @@ stargazer(tolerance_cov_table, title="Spearman Correlation Matrix of Tolerance B
 ### FOR MODEL COVARIATES ###########
 ####################################
 
-## STEPHEN: My code breaks here... not sure why? ##
-
 table_data <- myData[,c("sexuality2", # setup table
                         "herf_relig_bin_dist", "maj_relig_bin_dist",
                         "herf_ethn_dist", "maj_ethn_dist",  
@@ -262,7 +259,6 @@ row.names(tab_sum) <- c(
 )
 
 xtable(tab_sum) #latex output 
-
 
 #############################################################
 ########       END OF DESCRIPTIVE STATS SCRIPT       ########
