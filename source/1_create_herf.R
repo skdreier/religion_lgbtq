@@ -9,9 +9,8 @@
 #   - Data with Herfindahl calculations       #
 #   - Statistics for Tables A.4 and A.5       #
 #                                             #
-#                                             #
 #  R version 3.6.0 (2019-04-26)               #
-# DATE: 06/12/2019                            #
+# DATE: 06/26/2019                            #
 ###############################################
 
 # Content:
@@ -258,8 +257,12 @@ for (i in 1:length(nams)){
 # (See appendix for county selection justification)
 
 rel_statistics <- data.frame(nams, rel_herf_collect, max_relig_collect)
-rel_table <- subset(rel_statistics, with (rel_statistics, nams=="13_306_Mandera" | nams=="13_303_Turkana" | 
-                                            nams=="13_303_Kajiado" | nams=="13_304_Siaya" )  )
+
+rel_table <- subset(rel_statistics, with (rel_statistics, nams=="13_306_Mandera" | 
+                                            nams=="13_303_Turkana" | nams=="13_303_Kajiado" | 
+                                            nams=="13_304_Siaya" )  
+                    )
+
 rel_table <- rel_table[order(-rel_table$rel_herf_collect),]
 
 # Religion breakdowns: Mandera, Turkana, Siaya, Kajiado
@@ -283,8 +286,11 @@ Siaya <- round ( as.data.frame(ct$prop.row), 2)
 # (See appendix for county selection justification)
 
 ethn_statistics <- data.frame(nams, ethn_herf_collect, max_ethn_collect)
-ethn_table <- subset(ethn_statistics, with (ethn_statistics, nams=="13_301_Kiambu" | nams=="13_301_Nyandarua" |
-                       nams=="13_303_Nakuru" | nams=="13_300_Nairobi" )  )
+
+ethn_table <- subset(ethn_statistics, with (ethn_statistics, nams=="13_301_Kiambu" | 
+                                              nams=="13_301_Nyandarua" | nams=="13_303_Nakuru" | 
+                                              nams=="13_300_Nairobi" )  
+                     )
 
 # Ethnicity breakdowns: Kiambu, Nyandarua, Nakuru, Nairobi
 
