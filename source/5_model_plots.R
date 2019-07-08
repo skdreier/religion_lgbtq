@@ -8,7 +8,7 @@
 #   - Figure 4                                #
 #   - Figure 5A and 5B                        #
 #   - Table A.24 (Religious subset tables)    #
-#   - Figures A.23 (Religious subset plots)   #
+#   - Figure A.24 (Religious subset plots)   #
 #   - Figures A.25 (Country plots)            #
 #                                             #
 # AFROBAORMETER DATA                          #  
@@ -17,6 +17,8 @@
 # DATE: 06/26/2019                            # 
 ###############################################
 
+setwd("~/OneDrive/Academic/repositories/religion_lgbtq/")
+
 rm(list=ls())
 
 source("source/multiplot_code_lc.R")
@@ -24,6 +26,13 @@ library(ZeligChoice)
 library(Zelig)
 library(ggplot2)
 library(dplyr)
+library(magrittr)
+library(stringr)
+library(stargazer)
+
+library(devtools) 
+install_github("chrisadolph/simcf") # github source is compatible w recent R versions
+library(simcf) #extractdata
 
 ############################
 ### LOAD CLEAN SUBSET OF ###    
@@ -267,32 +276,48 @@ logit.3.catholic <- glm(model, family=binomial, data=mdata)
 mdata <- extractdata(model, muslim_present_data, extra = ~DISTRICT + RESPNO, na.rm=TRUE) 
 logit.3.muslim <- glm(model, family=binomial, data=mdata) 
 
-# Estimate model: Evangelicals, mainlines, Catholics, and Muslims present
+# Estimate model: Evangelicals, Mainlines, Catholics, and Muslims present
 mdata <- extractdata(model, all_present_data, extra = ~DISTRICT + RESPNO, na.rm=TRUE) 
 logit.3.all <- glm(model, family=binomial, data=mdata) 
+
+# Define and estimate model: Evangelicals, Mainlines, Catholics, and Muslims present
+# with binary controls for each of 4 religious groups
+
+model <- 
+  sexuality2 ~ 
+  herf_relig_bin_dist +  maj_relig_bin_dist +
+  prot_evan + prot_main + catholic + muslim2 + 
+  female + age + education + water_access + urban + religiosity + internet +
+  tol_relig2 + tol_ethnic2 + tol_hiv2 + tol_immig2 +
+  as.factor(ctry) 
+
+mdata <- extractdata(model, all_present_data, extra = ~DISTRICT + RESPNO, na.rm=TRUE) 
+logit.3.all.binaries <- glm(model, family=binomial, data=mdata) 
 
 ### Output table of model estimates for data subsets ###
 
 # Define variable names
 main.vars <- c("Religion HHI (district)", "Majority religion", 
-               "Christian", "Muslim", "Female", "Age", "Education",
+               "Christian", "Muslim", 
+               "Evangelical (binary)", "Mainline (binary)", "Catholic (binary)", "Muslim (binary)",
+               "Female", "Age", "Education",
                "Water access", "Urban", "Religiosity", "Access to internet",
                "Religious tolerance", "Ethnic tolerance", "HIV+ tolerance", "Immigrant tolerance")
 
 stargazer(logit.3.base, logit.3.evan, logit.3.main, logit.3.catholic, 
-          logit.3.muslim, logit.3.all,
+          logit.3.muslim, logit.3.all, logit.3.all.binaries,
           no.space=TRUE, label = "relig_subsets",
           keep.stat = c("n", "aic"), #see note above
           dep.var.caption = "DV: Homosexual as Neighbor (0: dislike, 1: don't care or like)",
           dep.var.labels.include = FALSE,
           covariate.labels = main.vars,
           column.labels=c("All Districts", "Evangelicals", "Mainlines", 
-                          "Catholics", "Muslims", "All Present"),
+                          "Catholics", "Muslims", "All Present", "All Present with binaries"),
           title = "Model 3 (Logit) among districts with the following groups present: 
-          Evangelicals (2), Mainlines (3), Catholics (4), Muslims (5), and all religious categories (6)",
+          Evangelicals (2), Mainlines (3), Catholics (4), Muslims (5), 
+          and all religious categories (6 and 7)",
           omit= "ctry", notes = c("Standard errors are clustered at the district level.")
 )
-
 
 ########################################################################
 ### FIGURES A.24 #######################################################
