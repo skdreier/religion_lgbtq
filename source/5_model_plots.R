@@ -8,13 +8,13 @@
 #   - Figure 4                                #
 #   - Figure 5A and 5B                        #
 #   - Table A.24 (Religious subset tables)    #
-#   - Figure A.24 (Religious subset plots)   #
-#   - Figures A.25 (Country plots)            #
+#   - Figure A.24 (Religious subset plots)    #
+#   - Figure A.25 (Country plots)             #
 #                                             #
 # AFROBAORMETER DATA                          #  
 # R version 3.6.0 (2019-04-26)                #
 #                                             #
-# DATE: 06/26/2019                            # 
+# DATE: 07/08/2019                            # 
 ###############################################
 
 setwd("~/OneDrive/Academic/repositories/religion_lgbtq/")
