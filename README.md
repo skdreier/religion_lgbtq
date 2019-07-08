@@ -41,7 +41,7 @@ We use the merged Afrobarometer Round 6 data, which is publicly available at: ht
     - Figure 4: Main model (3) results, probability of tolerating LGBTs
     - Figure 5a & 5b: Main model (3, ordered) results, probability of strongly opposing or tolerating LGBTs
     - Table A.24: Main model (3) results, subsetted to districts with specific religious identities present
-    - Figure A.23a - A.23d: Main model (3) results, subsetted to districts with specific religious identities present
+    - Figure A.24: Main model (3) results, subsetted to districts with specific religious identities present
     - Figure A.25: Main model (3) results among each distinct country surveyed by Afrobarometer. 
 
 - [robust_ethnicity.R](source/robust_ethnicity.R) runs robustness checks:
