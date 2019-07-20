@@ -14,7 +14,7 @@
 # AFROBAORMETER DATA                          #  
 # R version 3.6.0 (2019-04-26)                #
 #                                             #
-# DATE: 07/08/2019                            # 
+# DATE: 07/19/2019                            # 
 ###############################################
 
 setwd("~/OneDrive/Academic/repositories/religion_lgbtq/")
@@ -86,7 +86,7 @@ ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist))  +
     title = "Effect of Religious Diversity",
     subtitle = paste("on toleration of sexual minorities (logit)"),
     x = paste(xlab_name, "(0 = homogeneous)", sep=" "),
-    y = "Pr (Tolerating LGBT neighbors)"  
+    y = "Pr (Tolerating homosexual neighbors)"  
     ) +
   
   theme(
@@ -156,7 +156,7 @@ ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist)) +
         axis.title.y = element_text(size=17)
         ) +
   
-  annotate("text", x = .55, y=.915, label = "Pr (Strongly Opposing LGBT Neighbors)", 
+  annotate("text", x = .55, y=.91, label = "Pr (Strongly opposing\n homosexual neighbors)", 
            color="red", size=5.5) +
   
   ggsave("figures/5a_model3_ordered_oppose.png", device="png")
@@ -183,7 +183,7 @@ ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist)) +
         axis.title.y = element_text(size=17)
         ) +
   
-  annotate("text", x = .38, y=.08, label = "Pr (Not Opposing LGBT Neighbors)", 
+  annotate("text", x = .38, y=.08, label = "Pr (Not opposing\n homosexual neighbors)", 
            color="blue", size=5.5) +
   
   ggsave("figures/5b_model3_ordered_tolerate.png", device="png")
@@ -357,7 +357,7 @@ ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist)) +
     title = "Effect of Religious Diversity",
     subtitle = paste("on toleration of sexual minorities (logit)\namong districts with Protestant Evangelicals"),
     x = paste(xlab_name, "(0 = homogeneous)", sep=" "),
-    y = "Pr (Tolerating LGBT neighbors)"  ) +
+    y = "Pr (Tolerating homosexual neighbors)"  ) +
   
   theme(plot.title = element_text(size=16),
         plot.subtitle = element_text(size=15),
@@ -400,7 +400,7 @@ ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist)) +
     title = "Effect of Religious Diversity",
     subtitle = paste("on toleration of sexual minorities (logit)\namong districts with Mainline Protestants"),
     x = paste(xlab_name, "(0 = homogeneous)", sep=" "),
-    y = "Pr (Tolerating LGBT neighbors)"  ) +
+    y = "Pr (Tolerating homosexual neighbors)"  ) +
   
   theme(plot.title = element_text(size=16),
         plot.subtitle = element_text(size=15),
@@ -442,7 +442,7 @@ ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist)) +
     title = "Effect of Religious Diversity",
     subtitle = paste("on toleration of sexual minorities (logit)\namong districts with Catholics"),
     x = paste(xlab_name, "(0 = homogeneous)", sep=" "),
-    y = "Pr (Tolerating LGBT neighbors)"  ) +
+    y = "Pr (Tolerating homosexual neighbors)"  ) +
   
   theme(plot.title = element_text(size=16),
         plot.subtitle = element_text(size=15),
@@ -484,7 +484,7 @@ ggplot(data=plot_data_full, aes(x = herf_relig_bin_dist)) +
     title = "Effect of Religious Diversity",
     subtitle = paste("on toleration of sexual minorities (logit)\namong districts with Muslims"),
     x = paste(xlab_name, "(0 = homogeneous)", sep=" "),
-    y = "Pr (Tolerating LGBT neighbors)"  ) +
+    y = "Pr (Tolerating homosexual neighbors)"  ) +
   
   theme(plot.title = element_text(size=16),
         plot.subtitle = element_text(size=15),
@@ -541,7 +541,7 @@ for (i in 1:length(countrylist)) {
       title = paste(currcty, "Effect of Religious Diversity", sep=": "),
       subtitle = paste("on toleration of sexual minorities (logit)"),
       x = paste(xlab_name, "(0 = homogeneous)", sep=" "),
-      y = "Pr (Tolerating LGBT neighbors)"  
+      y = "Pr (Tolerating homosexual neighbors)"  
     ) +
     
     theme(
@@ -597,7 +597,7 @@ for (i in 1:length(countrylist)) {
       title = paste(currcty, "Effect of Religious Diversity", sep=": "),
       subtitle = paste("on toleration of sexual minorities (logit)"),
       x = paste(xlab_name, "(0 = homogeneous)", sep=" "),
-      y = "Pr (Tolerating LGBT neighbors)"  
+      y = "Pr (Tolerating homosexual neighbors)"  
     ) +
     
     theme(
