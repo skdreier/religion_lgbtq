@@ -4,7 +4,7 @@ Revisions: June 26
 
 # religion_lgbtq
 
-Replication material for "African, Religious, and Tolerant? How Religious Diversity Shapes Attitudes Towards Sexual Minorities in Africa" (article under review)
+Replication material for "African, Religious, and Tolerant? How Religious Diversity Shapes Attitudes Towards Sexual Minorities in Africa" (article accepted for publication).
 
 ## Authors
 Sarah Dreier, James Long, and Stephen Winkler (authorship listed alphabetically) 
